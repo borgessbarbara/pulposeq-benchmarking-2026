@@ -13,6 +13,6 @@ You, Y. et al. Benchmarking long-read RNA-sequencing technologies with LongBench
 
 ## Dong _et al. (2023)_
 
-ONT cDNA sequencing of Human LUAD (Non-small cell Lung Adenocarcinoma) cell-lines. RNA-seq data are available from Gene Expression Omnibus (GEO) under accession numbers GSE172421.Their pipeline is available at [XueyiDong/LongReadBenchmark](https://github.com/XueyiDong/LongReadBenchmark). 
+ONT cDNA sequencing of Human LUAD cell-lines. RNA-seq data are available from Gene Expression Omnibus (GEO) under accession numbers GSE172421.Their pipeline is available at [XueyiDong/LongReadBenchmark](https://github.com/XueyiDong/LongReadBenchmark). 
 
 Dong, X., Du, M.R.M., Gouil, Q. et al. Benchmarking long-read RNA-sequencing analysis tools using in silico mixtures. Nat Methods 20, 1810–1821 (2023). https://doi.org/10.1038/s41592-023-02026-3
