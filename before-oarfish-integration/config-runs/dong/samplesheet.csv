@@ -1,5 +1,5 @@
 sample,group,fastq
-H1975_1,TKI-resistant,/home/mbbdsantana/scratch/paper/dong/samples/H1975_1.fastq.gz
+H1975_1,H1975,/home/mbbdsantana/scratch/paper/dong/samples/H1975_1.fastq.gz
 H1975_2,H1975,/home/mbbdsantana/scratch/paper/dong/samples/H1975_2.fastq.gz
 H1975_3,H1975,/home/mbbdsantana/scratch/paper/dong/samples/H1975_3.fastq.gz
 HCC827_1,HCC827,/home/mbbdsantana/scratch/paper/dong/samples/HCC827_1.fastq.gz
