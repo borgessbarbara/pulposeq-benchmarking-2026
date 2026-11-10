@@ -154,15 +154,3 @@ Analyses are unchanged (same inputs, filters, tests, scoring). Changes:
      colour bar "z-score (logCPM)", no biotype key).
    - Geometry (point sizes, line widths, bar widths) is what the original scripts drew.
    - One deliberate difference: Fig. 2d subtitle says "logCPM", not "VST" (no DESeq2).
-
-## Not yet as printed
-
-- **Fig. 2h (EGFR locus)**: the printed panel has the chromosome ideogram, no coverage tracks and its own font
-  sizes (labels 7 pt, legend 8 pt); `04_isoformic.R` draws the journal locus (with coverage, no ideogram).
-- **Fig. 2l (circos)**: drawn by `03_cis_circos.R` (`paper_cis_circos.*`) at its own size and fonts.
-
-## Not carried over (still in the original folders)
-
-`make_fig2_benchmark_novel.R`, `make_fig2_v2_composite.R`, `make_fig1_fig2_composite.R`, `make_fig_dong.R`,
-`isoformic_dong.R`, `isoformic_consolidated.R`, `marker_genes.csv`, `de_single_dataset.R` (DESeq2), and the composites themselves — the figures are
-assembled in the vector editor from the panel files.
