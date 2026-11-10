@@ -1,5 +1,5 @@
 input: "/home/mbbdsantana/scratch/paper/dong/samplesheet.csv"
-outdir: "/home/mbbdsantana/scratch/paper/dong/results_oarfish"
+outdir: "/home/mbbdsantana/scratch/paper/dong/results"
 
 skip_chopper: true   # filtering and trimming; every NanoComp report still runs
 skip_minimap2: false # alignment, and with it bambu, classification and the report
@@ -21,9 +21,3 @@ restrand_min_frac: 0.76
 restrand_kit: "PCB109"
 
 ndr: 0.1
-
-min_total_counts: 5
-
-run_oarfish: true
-
-oarfish_num_bootstraps: 50
