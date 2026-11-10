@@ -6,3 +6,6 @@ nextflow run /home/mbbdsantana/scratch/pulposeq/main.nf -profile large,singulari
 
 # PacBio
 nextflow run /home/mbbdsantana/scratch/pulposeq/main.nf -profile large,singularity -params-file run_pacbio.yml
+
+# Dong
+nextflow run /home/mbbdsantana/scratch/pulposeq/main.nf -profile large,singularity -params-file run_dong.yml
