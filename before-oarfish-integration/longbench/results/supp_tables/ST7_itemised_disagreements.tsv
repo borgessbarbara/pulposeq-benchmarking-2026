@@ -1,0 +1,64 @@
+UJC_ID	Attribute	Sharing category	Protocol 1	Value 1	Protocol 2	Value 2	Host gene 1	Host gene 2	Strand	d5 (bp)	d3 (bp)	Spliced 1 (nt)	Spliced 2 (nt)	Delta spliced (nt)	Likely driver
+UJC361	GffCompare class code	ONTd+PB	ONTd	k	PB	j	ENSG00000278730.1	ENSG00000291214.1	+	99	-3678	4498	919	-3579	3' end
+UJC535	GffCompare class code	ONTd+ONTc	ONTd	k	ONTc	j	ENSG00000185065.7	ENSG00000185065.7	+	-459	-2893	3883	531	-3352	3' end
+UJC1	GffCompare class code	shared_all	ONTd	n	ONTc	j	ENSG00000228794.13	ENSG00000228794.13	+	-4	-2754	4376	1618	-2758	3' end
+UJC630	GffCompare class code	ONTd+ONTc	ONTd	o	ONTc	u	ENSG00000295198.1		+	10	-2726	3760	1044	-2716	3' end
+UJC1	GffCompare class code	shared_all	ONTd	n	PB	j	ENSG00000228794.13	ENSG00000228794.13	+	32	-2745	4376	1663	-2713	3' end
+UJC628	GffCompare class code	ONTd+PB	ONTd	k	PB	j	ENSG00000214273.4	ENSG00000214273.4	+	8	-2184	3574	1398	-2176	3' end
+UJC202	GffCompare class code	shared_all	ONTc	j	PB	k	ENSG00000256151.1	ENSG00000280002.1	-	14	2156	857	3027	2170	3' end
+UJC202	GffCompare class code	shared_all	ONTd	k	ONTc	j	ENSG00000280002.1	ENSG00000256151.1	-	3	-2156	3010	857	-2153	3' end
+UJC219	GffCompare class code	ONTd+ONTc	ONTd	k	ONTc	j	ENSG00000151773.15	ENSG00000151773.15	-	12	-1249	2119	882	-1237	3' end
+UJC480	GffCompare class code	ONTd+PB	ONTd	j	PB	k	ENSG00000189362.14	ENSG00000290089.2	-	2	1093	1572	2667	1095	3' end
+UJC424	GffCompare class code	shared_all	ONTc	o	PB	k	ENSG00000235181.1	ENSG00000235181.1	+	23	775	1133	1931	798	3' end
+UJC424	GffCompare class code	shared_all	ONTd	k	ONTc	o	ENSG00000235181.1	ENSG00000235181.1	+	-17	-769	1919	1133	-786	3' end
+UJC48	GffCompare class code	shared_all	ONTd	j	PB	k	ENSG00000270276.3	ENSG00000270276.3	-	13	111	945	1069	124	3' end
+UJC578	GffCompare class code	ONTd+PB	ONTd	k	PB	j	ENSG00000203644.3	ENSG00000203644.3	-	-92	-2	1812	1718	-94	5' end
+UJC680	GffCompare class code	shared_all	ONTd	j	PB	k	ENSG00000180573.11	ENSG00000180573.11	+	12	-2	1686	1696	10	5' end
+UJC680	GffCompare class code	shared_all	ONTd	j	ONTc	k	ENSG00000180573.11	ENSG00000180573.11	+	12	-4	1686	1694	8	5' end
+UJC48	GffCompare class code	shared_all	ONTd	j	ONTc	k	ENSG00000270276.3	ENSG00000270276.3	-	10	-3	945	952	7	5' end
+UJC825	pulposeq transcript biotype	ONTd+PB	ONTd	novel_lncRNA	PB	novel_non_coding	ENSG00000260947.1	ENSG00000260947.1	+	13	-4044	8828	4797	-4031	coding potential
+UJC197	pulposeq transcript biotype	ONTd+ONTc	ONTd	novel_protein_coding	ONTc	novel_lncRNA			-	12	-3460	4567	1119	-3448	coding potential
+UJC331	pulposeq transcript biotype	shared_all	ONTc	novel_protein_coding	PB	novel_lncRNA			-	30	3310	1133	4473	3340	coding potential
+UJC331	pulposeq transcript biotype	shared_all	ONTd	novel_lncRNA	ONTc	novel_protein_coding			-	-15	-3297	4445	1133	-3312	coding potential
+UJC835	pulposeq transcript biotype	ONTd+PB	ONTd	novel_lncRNA	PB	novel_protein_coding	ENSG00000235601.2	ENSG00000235601.2	+	29	2749	684	3462	2778	coding potential
+UJC706	pulposeq transcript biotype	ONTd+ONTc	ONTd	novel_non_coding	ONTc	novel_protein_coding	ENSG00000146243.15	ENSG00000146243.15	+	-31	-2385	3238	822	-2416	coding potential
+UJC202	pulposeq transcript biotype	shared_all	ONTc	novel_lncRNA	PB	novel_protein_coding	ENSG00000256151.1	ENSG00000280002.1	-	14	2156	857	3027	2170	host gene switch
+UJC202	pulposeq transcript biotype	shared_all	ONTd	novel_protein_coding	ONTc	novel_lncRNA	ENSG00000280002.1	ENSG00000256151.1	-	3	-2156	3010	857	-2153	host gene switch
+UJC702	pulposeq transcript biotype	ONTd+PB	ONTd	novel_non_coding	PB	novel_protein_coding	ENSG00000112245.15	ENSG00000112245.15	+	-7	-1915	4381	2459	-1922	coding potential
+UJC44	pulposeq transcript biotype	ONTd+PB	ONTd	novel_non_coding	PB	novel_protein_coding	ENSG00000175658.4	ENSG00000175658.4	-	10	-1783	4241	2468	-1773	coding potential
+UJC366	pulposeq transcript biotype	ONTd+PB	ONTd	novel_protein_coding	PB	novel_non_coding	ENSG00000167895.18	ENSG00000167895.18	+	11	1601	594	2206	1612	coding potential
+UJC571	pulposeq transcript biotype	ONTd+ONTc	ONTd	novel_non_coding	ONTc	novel_protein_coding	ENSG00000163406.13	ENSG00000163406.13	+	-11	-1577	2355	767	-1588	coding potential
+UJC110	pulposeq transcript biotype	ONTc+PB	ONTc	novel_protein_coding	PB	novel_lncRNA	ENSG00000307961.1	ENSG00000307961.1	-	21	1551	1642	3214	1572	coding potential
+UJC532	pulposeq transcript biotype	ONTd+PB	ONTd	novel_protein_coding	PB	novel_lncRNA	ENSG00000274225.2	ENSG00000274225.2	+	5	-1485	3026	1546	-1480	coding potential
+UJC304	pulposeq transcript biotype	ONTd+ONTc	ONTd	novel_protein_coding	ONTc	novel_lncRNA	ENSG00000262482.2	ENSG00000262482.2	-	32	-1104	1843	771	-1072	coding potential
+UJC32	pulposeq transcript biotype	shared_all	ONTd	novel_protein_coding	ONTc	novel_lncRNA			+	11	-952	2686	1745	-941	coding potential
+UJC32	pulposeq transcript biotype	shared_all	ONTd	novel_protein_coding	PB	novel_lncRNA			+	23	-952	2686	1757	-929	coding potential
+UJC778	pulposeq transcript biotype	shared_all	ONTc	novel_non_coding	PB	novel_lncRNA	ENSG00000283128.3	ENSG00000216895.9	-	36	849	595	1480	885	host gene switch
+UJC778	pulposeq transcript biotype	shared_all	ONTd	novel_protein_coding	PB	novel_lncRNA	ENSG00000216895.9	ENSG00000216895.9	-	44	432	1004	1480	476	coding potential
+UJC778	pulposeq transcript biotype	shared_all	ONTd	novel_protein_coding	ONTc	novel_non_coding	ENSG00000216895.9	ENSG00000283128.3	-	8	-417	1004	595	-409	host gene switch
+UJC448	pulposeq transcript biotype	ONTd+PB	ONTd	novel_lncRNA	PB	novel_protein_coding	ENSG00000236502.4	ENSG00000236502.4	-	367	0	993	1360	367	coding potential
+UJC508	pulposeq transcript biotype	ONTd+PB	ONTd	novel_protein_coding	PB	novel_non_coding	ENSG00000124249.8	ENSG00000124249.8	+	10	330	1691	2031	340	coding potential
+UJC48	pulposeq transcript biotype	shared_all	ONTc	novel_protein_coding	PB	novel_non_coding	ENSG00000270276.3	ENSG00000270276.3	-	3	114	952	1069	117	coding potential
+UJC578	pulposeq transcript biotype	ONTd+PB	ONTd	novel_protein_coding	PB	novel_non_coding	ENSG00000203644.3	ENSG00000203644.3	-	-92	-2	1812	1718	-94	coding potential
+UJC93	pulposeq transcript biotype	ONTd+PB	ONTd	novel_non_coding	PB	novel_protein_coding	ENSG00000095794.22	ENSG00000095794.22	+	9	-86	1851	1774	-77	coding potential
+UJC357	pulposeq transcript biotype	ONTd+PB	ONTd	novel_non_coding	PB	novel_protein_coding	ENSG00000279059.1	ENSG00000279059.1	-	15	0	3550	3565	15	coding potential
+UJC815	pulposeq transcript biotype	ONTd+PB	ONTd	novel_lncRNA	PB	novel_protein_coding	ENSG00000287222.2	ENSG00000287222.2	+	11	0	2669	2680	11	coding potential
+UJC905	pulposeq transcript biotype	ONTd+ONTc	ONTd	novel_non_coding	ONTc	novel_lncRNA	ENSG00000276256.1	ENSG00000303853.1	-	12	-3	1184	1193	9	host gene switch
+UJC48	pulposeq transcript biotype	shared_all	ONTd	novel_non_coding	ONTc	novel_protein_coding	ENSG00000270276.3	ENSG00000270276.3	-	10	-3	945	952	7	coding potential
+UJC63	Reference host gene	ONTd+PB	ONTd	ENSG00000243155.1	PB	ENSG00000232586.1	ENSG00000243155.1	ENSG00000232586.1	-	14	-5651	7799	2162	-5637	3' end
+UJC361	Reference host gene	ONTd+PB	ONTd	ENSG00000278730.1	PB	ENSG00000291214.1	ENSG00000278730.1	ENSG00000291214.1	+	99	-3678	4498	919	-3579	3' end
+UJC397	Reference host gene	shared_all	ONTc	ENSG00000290812.2	PB	ENSG00000286132.1	ENSG00000290812.2	ENSG00000286132.1	+	12	2893	853	3758	2905	3' end
+UJC397	Reference host gene	shared_all	ONTd	ENSG00000286132.1	ONTc	ENSG00000290812.2	ENSG00000286132.1	ENSG00000290812.2	+	-11	-2893	3757	853	-2904	3' end
+UJC202	Reference host gene	shared_all	ONTc	ENSG00000256151.1	PB	ENSG00000280002.1	ENSG00000256151.1	ENSG00000280002.1	-	14	2156	857	3027	2170	3' end
+UJC202	Reference host gene	shared_all	ONTd	ENSG00000280002.1	ONTc	ENSG00000256151.1	ENSG00000280002.1	ENSG00000256151.1	-	3	-2156	3010	857	-2153	3' end
+UJC556	Reference host gene	shared_all	ONTd	ENSG00000308411.1	PB	ENSG00000300248.1	ENSG00000308411.1	ENSG00000300248.1	-	10	1305	818	2133	1315	3' end
+UJC480	Reference host gene	ONTd+PB	ONTd	ENSG00000189362.14	PB	ENSG00000290089.2	ENSG00000189362.14	ENSG00000290089.2	-	2	1093	1572	2667	1095	3' end
+UJC809	Reference host gene	ONTd+PB	ONTd	ENSG00000301205.1	PB	ENSG00000299025.1	ENSG00000301205.1	ENSG00000299025.1	-	1	-941	2853	1913	-940	3' end
+UJC778	Reference host gene	shared_all	ONTc	ENSG00000283128.3	PB	ENSG00000216895.9	ENSG00000283128.3	ENSG00000216895.9	-	36	849	595	1480	885	3' end
+UJC142	Reference host gene	ONTd+PB	ONTd	ENSG00000174804.5	PB	ENSG00000255471.2	ENSG00000174804.5	ENSG00000255471.2	-	12	428	1160	1600	440	3' end
+UJC778	Reference host gene	shared_all	ONTd	ENSG00000216895.9	ONTc	ENSG00000283128.3	ENSG00000216895.9	ENSG00000283128.3	-	8	-417	1004	595	-409	3' end
+UJC16	Reference host gene	ONTd+PB	ONTd	ENSG00000284719.4	PB	ENSG00000261798.1	ENSG00000284719.4	ENSG00000261798.1	+	227	1	1122	1350	228	5' end
+UJC274	Reference host gene	shared_all	ONTc	ENSG00000211958.2	PB	ENSG00000278473.1	ENSG00000211958.2	ENSG00000278473.1	-	44	3	2152	2199	47	5' end
+UJC274	Reference host gene	shared_all	ONTd	ENSG00000211958.2	PB	ENSG00000278473.1	ENSG00000211958.2	ENSG00000278473.1	-	12	2	2185	2199	14	5' end
+UJC556	Reference host gene	shared_all	ONTd	ENSG00000308411.1	ONTc	ENSG00000300248.1	ENSG00000308411.1	ENSG00000300248.1	-	10	-1	818	827	9	5' end
+UJC905	Reference host gene	ONTd+ONTc	ONTd	ENSG00000276256.1	ONTc	ENSG00000303853.1	ENSG00000276256.1	ENSG00000303853.1	-	12	-3	1184	1193	9	5' end

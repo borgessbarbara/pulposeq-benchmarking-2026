@@ -1,0 +1,13 @@
+category	n	pct_of_all_entities	pct_of_shared	n_multiexon	n_monoexon
+shared_all	211	6.04	23.09	211	0
+ONTd+ONTc	232	6.64	25.38	232	0
+ONTd+PB	426	12.2	46.61	426	0
+ONTc+PB	45	1.29	4.92	45	0
+ONTd_only	1206	34.54	NA	1172	34
+ONTc_only	395	11.31	NA	349	46
+PB_only	977	27.98	NA	757	220
+TOTAL_shared(>=2 protocols)	914	26.17	100	914	0
+TOTAL_entities	3492	100	NA	3192	300
+INPUT_ONTd	2075	NA	NA	2041	34
+INPUT_ONTc	883	NA	NA	837	46
+INPUT_PB	1659	NA	NA	1439	220

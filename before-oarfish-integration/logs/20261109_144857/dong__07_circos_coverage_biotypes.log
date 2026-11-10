@@ -1,0 +1,25 @@
+Figure font: Source Sans 3 (installed font C:/Windows/Fonts/SourceSans3-Regular.otf)
+Annotated: 287,162 transcripts; 282,256 plotted (chr1-chrX, pseudogenes removed: 3,649)
+            group strand     N
+           <char> <char> <int>
+1:          Other      + 35705
+2:          Other      - 34839
+3: Protein-coding      + 79370
+4: Protein-coding      - 77555
+5:         lncRNA      + 26844
+6:         lncRNA      - 27943
+Novel: 1,056 transcripts, 1,047 plotted (dropped 9 on chrY/scaffolds/unstranded)
+                  group strand     N
+                 <char> <char> <int>
+1:         Novel lncRNA      +   288
+2:         Novel lncRNA      -   267
+3:     Novel non-coding      +    99
+4:     Novel non-coding      -   103
+5: Novel protein-coding      +   158
+6: Novel protein-coding      -   132
+Reading 6 bigWig files from C:\Users\mbarb\OneDrive\paper\dong\coverage ...
+Coverage replicates per cell line: HCC827 = 3, H1975 = 3
+centre legend shrunk to 9.7 pt to fit the hole
+centre legend shrunk to 9.7 pt to fit the hole
+centre legend shrunk to 9.7 pt to fit the hole
+Done: C:/Users/mbarb/OneDrive/paper/downstream/dong/figures/circos_coverage/circos_coverage_biotypes.pdf / .png / .svg; bin tables in C:/Users/mbarb/OneDrive/paper/downstream/dong/results/circos_coverage

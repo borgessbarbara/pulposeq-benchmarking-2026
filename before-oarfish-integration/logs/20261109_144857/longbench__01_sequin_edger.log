@@ -1,0 +1,73 @@
+[ONT cDNA gene (edgeR)] 56 sequins, 25 pass the filter, 10 ratio-1 controls, 15 truly DE
+[ONT cDNA transcript (edgeR)] 110 sequins, 45 pass the filter, 23 ratio-1 controls, 22 truly DE
+[ONT DRS gene (edgeR)] 68 sequins, 42 pass the filter, 17 ratio-1 controls, 25 truly DE
+[ONT DRS transcript (edgeR)] 139 sequins, 76 pass the filter, 36 ratio-1 controls, 40 truly DE
+[PacBio gene (edgeR)] 74 sequins, 61 pass the filter, 21 ratio-1 controls, 40 truly DE
+[PacBio transcript (edgeR)] 156 sequins, 110 pass the filter, 51 ratio-1 controls, 59 truly DE
+# A tibble: 6 × 12
+  platform level tested truly_de n_called wrong_sign sensitivity precision    f1
+  <chr>    <chr>  <int>    <int>    <int>      <int>       <dbl>     <dbl> <dbl>
+1 ont_cdna gene      25       15       13          0       0.867     1     0.929
+2 ont_cdna tran…     45       22       19          1       0.818     0.947 0.878
+3 ont_drs  gene      42       25       23          0       0.92      1     0.958
+4 ont_drs  tran…     76       40       37          0       0.925     1     0.961
+5 pb       gene      61       40       35          3       0.8       0.914 0.853
+6 pb       tran…    110       59       55          1       0.915     0.982 0.947
+# ℹ 3 more variables: auc <dbl>, slope <dbl>, r2 <dbl>
+[ONT cDNA] sequin isoforms not detected (54 of 164): R1_21_1, R1_21_2, R1_24_1, R1_42_1, R1_42_2, R1_51_1, R1_51_2, R1_52_2, R1_53_1, R1_61_1, R1_62_1, R1_62_2, R1_63_1, R1_63_2, R1_72_1, R1_72_2, R1_81_1, R1_82_1, R1_82_2, R1_83_1
+[ONT DRS] sequin isoforms not detected (28 of 164): R1_21_1, R1_21_2, R1_24_1, R1_42_1, R1_42_2, R1_51_1, R1_51_2, R1_63_1, R1_63_2, R1_83_2, R1_93_1, R1_93_2, R2_105_1, R2_152_1, R2_152_2, R2_153_2, R2_20_1, R2_33_1, R2_37_1, R2_37_2
+[PacBio] sequin isoforms not detected (8 of 164): R1_101_2, R1_21_1, R1_21_2, R1_51_1, R1_51_2, R2_105_1, R2_151_3, R2_33_1
+Warning messages:
+1: There were 2 warnings in `summarise()`.
+The first warning was:
+ℹ In argument: `start = min(start)`.
+Caused by warning in `min()`:
+! no non-missing arguments to min; returning Inf
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning. 
+2: There were 2 warnings in `summarise()`.
+The first warning was:
+ℹ In argument: `start = min(start)`.
+Caused by warning in `min()`:
+! no non-missing arguments to min; returning Inf
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning. 
+3: There were 2 warnings in `summarise()`.
+The first warning was:
+ℹ In argument: `start = min(start)`.
+Caused by warning in `min()`:
+! no non-missing arguments to min; returning Inf
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning. 
+4: There were 2 warnings in `summarise()`.
+The first warning was:
+ℹ In argument: `start = min(start)`.
+Caused by warning in `min()`:
+! no non-missing arguments to min; returning Inf
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning. 
+5: There were 2 warnings in `summarise()`.
+The first warning was:
+ℹ In argument: `start = min(start)`.
+Caused by warning in `min()`:
+! no non-missing arguments to min; returning Inf
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning. 
+6: There were 2 warnings in `summarise()`.
+The first warning was:
+ℹ In argument: `start = min(start)`.
+Caused by warning in `min()`:
+! no non-missing arguments to min; returning Inf
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning. 
+# A tibble: 3 × 15
+  platform protocol annotated in_validated_table in_bambu_table detected_bambu
+  <chr>    <chr>        <int>              <int>          <int>          <int>
+1 ont_cdna ONT cDNA       164                110            164            110
+2 ont_drs  ONT DRS        164                139            164            136
+3 pb       PacBio         164                156            164            156
+  detected not_detected novel_raw precision_raw f1_raw recall novel_validated
+     <int>        <int>     <int>         <dbl>  <dbl>  <dbl>           <int>
+1      110           54         0             1  0.803  0.671               0
+2      136           28         0             1  0.907  0.829               0
+3      156            8         0             1  0.975  0.951               0
+  precision_validated f1_validated
+                <dbl>        <dbl>
+1                   1        0.803
+2                   1        0.907
+3                   1        0.975
+Done: C:/Users/mbarb/OneDrive/paper/downstream/longbench/results/spikeins/sequins/edger

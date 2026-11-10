@@ -1,0 +1,37 @@
+run,biotype,support,n,total,pct,pct_1dp
+LongBench ONT DRS,annotated protein-coding,full-length + unique,168932,292996,57.65675981924668,57.7%
+LongBench ONT DRS,annotated protein-coding,unique only,48203,292996,16.451760433589538,16.5%
+LongBench ONT DRS,annotated protein-coding,full-length only,41155,292996,14.046266843233354,14.0%
+LongBench ONT DRS,annotated protein-coding,neither,34706,292996,11.84521290393043,11.8%
+LongBench ONT DRS,annotated lncRNA,full-length + unique,37748,75474,50.01457455547606,50.0%
+LongBench ONT DRS,annotated lncRNA,unique only,14756,75474,19.551103691337413,19.6%
+LongBench ONT DRS,annotated lncRNA,full-length only,6461,75474,8.560563902800965,8.6%
+LongBench ONT DRS,annotated lncRNA,neither,16509,75474,21.873757850385562,21.9%
+LongBench ONT DRS,other biotypes,full-length + unique,2490,4940,50.40485829959514,50.4%
+LongBench ONT DRS,other biotypes,unique only,2426,4940,49.10931174089069,49.1%
+LongBench ONT DRS,other biotypes,full-length only,19,4940,0.38461538461538464,0.4%
+LongBench ONT DRS,other biotypes,neither,5,4940,0.10121457489878542,0.1%
+LongBench ONT DRS,predicted protein-coding,full-length + unique,959,963,99.5846313603323,99.6%
+LongBench ONT DRS,predicted protein-coding,unique only,0,963,0,0.0%
+LongBench ONT DRS,predicted protein-coding,full-length only,4,963,0.4153686396677051,0.4%
+LongBench ONT DRS,predicted protein-coding,neither,0,963,0,0.0%
+LongBench ONT DRS,novel lncRNA candidate,full-length + unique,800,801,99.87515605493134,99.9%
+LongBench ONT DRS,novel lncRNA candidate,unique only,0,801,0,0.0%
+LongBench ONT DRS,novel lncRNA candidate,full-length only,1,801,0.12484394506866417,0.1%
+LongBench ONT DRS,novel lncRNA candidate,neither,0,801,0,0.0%
+LongBench ONT DRS,predicted non-coding,full-length + unique,310,311,99.67845659163987,99.7%
+LongBench ONT DRS,predicted non-coding,unique only,1,311,0.3215434083601286,0.3%
+LongBench ONT DRS,predicted non-coding,full-length only,0,311,0,0.0%
+LongBench ONT DRS,predicted non-coding,neither,0,311,0,0.0%
+LongBench ONT DRS,all annotated,full-length + unique,209170,373410,56.0161752497255,56.0%
+LongBench ONT DRS,all annotated,unique only,65385,373410,17.510243432152325,17.5%
+LongBench ONT DRS,all annotated,full-length only,47635,373410,12.75675530917758,12.8%
+LongBench ONT DRS,all annotated,neither,51220,373410,13.716826008944592,13.7%
+LongBench ONT DRS,all novel,full-length + unique,2069,2075,99.71084337349397,99.7%
+LongBench ONT DRS,all novel,unique only,1,2075,0.04819277108433735,0.0%
+LongBench ONT DRS,all novel,full-length only,5,2075,0.24096385542168675,0.2%
+LongBench ONT DRS,all novel,neither,0,2075,0,0.0%
+LongBench ONT DRS,all transcripts,full-length + unique,211239,375485,56.25764011877971,56.3%
+LongBench ONT DRS,all transcripts,unique only,65386,375485,17.41374488994234,17.4%
+LongBench ONT DRS,all transcripts,full-length only,47640,375485,12.687590716007298,12.7%
+LongBench ONT DRS,all transcripts,neither,51220,375485,13.64102427527065,13.6%

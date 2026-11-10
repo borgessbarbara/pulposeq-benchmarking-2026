@@ -1,0 +1,16 @@
+protocol,n,total,type
+ONT cDNA,56,78,Sequin genes
+ONT cDNA,110,164,Sequin isoforms
+ONT DRS,68,78,Sequin genes
+ONT DRS,136,164,Sequin isoforms
+PacBio,74,78,Sequin genes
+PacBio,156,164,Sequin isoforms
+ONT cDNA,68,69,SIRV E0
+ONT DRS,68,69,SIRV E0
+PacBio,68,69,SIRV E0
+ONT cDNA,15,15,long SIRV
+ONT DRS,15,15,long SIRV
+PacBio,15,15,long SIRV
+ONT cDNA,48,92,ERCC
+ONT DRS,42,92,ERCC
+PacBio,58,92,ERCC

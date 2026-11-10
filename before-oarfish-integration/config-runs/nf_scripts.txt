@@ -1,0 +1,8 @@
+# ONT cDNA
+nextflow run /home/mbbdsantana/scratch/pulposeq/main.nf -profile large,singularity -params-file run_ont.yml
+
+# ONT DRS
+nextflow run /home/mbbdsantana/scratch/pulposeq/main.nf -profile large,singularity -params-file run_ont_drs.yml
+
+# PacBio
+nextflow run /home/mbbdsantana/scratch/pulposeq/main.nf -profile large,singularity -params-file run_pacbio.yml

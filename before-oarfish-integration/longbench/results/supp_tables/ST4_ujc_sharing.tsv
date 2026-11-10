@@ -1,0 +1,10 @@
+Category	Protocols	UJC entities	% of all entities	% of shared entities	Multi-exon	Mono-exon
+shared_all	ONTd, ONTc, PB	211	6.04%	23.09%	211	0
+ONTd+ONTc	ONTd, ONTc	232	6.64%	25.38%	232	0
+ONTd+PB	ONTd, PB	426	12.20%	46.61%	426	0
+ONTc+PB	ONTc, PB	45	1.29%	4.92%	45	0
+ONTd_only	ONTd	1,206	34.54%	-	1,172	34
+ONTc_only	ONTc	395	11.31%	-	349	46
+PB_only	PB	977	27.98%	-	757	220
+Shared (>=2 protocols)	-	914	26.17%	100.00%	914	0
+All entities	-	3,492	100.00%	-	3,192	300

@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='576.00pt' height='360.00pt' viewBox='0 0 576.00 360.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw1NzYuMDB8MC4wMHwzNjAuMDA='>
+    <rect x='0.00' y='0.00' width='576.00' height='360.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw1NzYuMDB8MC4wMHwzNjAuMDA=)'>
+<rect x='0.000000000000064' y='0.00' width='576.00' height='360.00' style='stroke-width: 1.36; stroke: #FFFFFF; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNDYuNDV8NDYzLjA2fDQ0LjcwfDI5NC4wOQ=='>
+    <rect x='46.45' y='44.70' width='416.60' height='249.40' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNDYuNDV8NDYzLjA2fDQ0LjcwfDI5NC4wOQ==)'>
+<rect x='46.45' y='44.70' width='416.60' height='249.40' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+<polyline points='46.45,287.41 463.06,287.41 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='46.45,221.30 463.06,221.30 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='46.45,155.19 463.06,155.19 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='46.45,89.09 463.06,89.09 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='46.45,254.35 463.06,254.35 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='46.45,188.25 463.06,188.25 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='46.45,122.14 463.06,122.14 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='46.45,56.03 463.06,56.03 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='105.97,294.09 105.97,44.70 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='205.16,294.09 205.16,44.70 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='304.35,294.09 304.35,44.70 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='403.54,294.09 403.54,44.70 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<rect x='61.33' y='56.03' width='89.27' height='226.72' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #FB8072;' />
+<rect x='160.52' y='56.03' width='89.27' height='111.43' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #A6D854;' />
+<rect x='259.72' y='56.03' width='89.27' height='169.55' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #A6D854;' />
+<rect x='358.91' y='56.03' width='89.27' height='182.22' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #A6D854;' />
+<line x1='46.45' y1='56.03' x2='463.06' y2='56.03' style='stroke-width: 1.36; stroke: #7F7F7F; stroke-linecap: butt;' />
+<rect x='46.45' y='44.70' width='416.60' height='249.40' style='stroke-width: 1.36; stroke: #333333;' />
+</g>
+<g clip-path='url(#cpMC4wMHw1NzYuMDB8MC4wMHwzNjAuMDA=)'>
+<text x='40.18' y='258.02' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>-7.5</text>
+<text x='40.18' y='191.91' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>-5.0</text>
+<text x='40.18' y='125.81' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>-2.5</text>
+<text x='40.18' y='59.70' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>0.0</text>
+<polyline points='42.97,254.35 46.45,254.35 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='42.97,188.25 46.45,188.25 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='42.97,122.14 46.45,122.14 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='42.97,56.03 46.45,56.03 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='105.97,297.58 105.97,294.09 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='205.16,297.58 205.16,294.09 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='304.35,297.58 304.35,294.09 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='403.54,297.58 403.54,294.09 ' style='stroke-width: 1.36; stroke: #333333; stroke-linecap: butt;' />
+<text transform='translate(111.16,305.56) rotate(-45)' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>CEACAM5</text>
+<text transform='translate(210.35,305.56) rotate(-45)' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>CEACAM5-216</text>
+<text transform='translate(309.54,305.56) rotate(-45)' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>CEACAM5-212</text>
+<text transform='translate(408.73,305.56) rotate(-45)' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Source Sans 3";'>CEACAM5-246</text>
+<text transform='translate(16.16,169.39) rotate(-90)' text-anchor='middle' style='font-size: 14.00px; font-family: "Source Sans 3";'>log2FC (TKI_resistant / TKI_sensitive)</text>
+<rect x='477.01' y='110.43' width='74.45' height='52.00' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+<text x='477.01' y='119.55' style='font-size: 11.90px; font-family: "Source Sans 3";'>DE (FDR &lt; 0.05)</text>
+<rect x='477.01' y='127.86' width='17.28' height='17.28' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+<rect x='477.29' y='128.14' width='16.71' height='16.71' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #595959; fill-opacity: 0.25;' />
+<rect x='477.01' y='145.14' width='17.28' height='17.28' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+<rect x='477.29' y='145.42' width='16.71' height='16.71' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #595959;' />
+<text x='501.26' y='140.17' style='font-size: 11.20px; font-family: "Source Sans 3";'>No</text>
+<text x='501.26' y='157.45' style='font-size: 11.20px; font-family: "Source Sans 3";'>Yes</text>
+<rect x='477.01' y='176.37' width='92.02' height='52.00' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+<text x='477.01' y='185.50' style='font-size: 11.90px; font-family: "Source Sans 3";'>Feature type</text>
+<rect x='477.01' y='193.80' width='17.28' height='17.28' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+<rect x='477.29' y='194.09' width='16.71' height='16.71' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #FB8072;' />
+<rect x='477.01' y='211.08' width='17.28' height='17.28' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+<rect x='477.29' y='211.37' width='16.71' height='16.71' style='stroke-width: 0.43; stroke: #404040; stroke-linecap: butt; stroke-linejoin: miter; fill: #A6D854;' />
+<text x='501.26' y='206.11' style='font-size: 11.20px; font-family: "Source Sans 3";'>gene</text>
+<text x='501.26' y='223.39' style='font-size: 11.20px; font-family: "Source Sans 3";'>protein coding</text>
+<text x='46.45' y='35.27' style='font-size: 10.92px;fill: #4D4D4D; font-family: "Source Sans 3";'>LUAD lineage identity</text>
+<text x='46.45' y='17.54' style='font-size: 16.10px; font-family: "Source Sans 3";'>CEACAM5 · lineage marker loss</text>
+</g>
+</g>
+</svg>

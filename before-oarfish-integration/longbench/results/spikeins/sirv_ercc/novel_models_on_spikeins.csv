@@ -1,0 +1,2 @@
+protocol,stage,family,seqname,start,end,strand,exons,exonic_len,gene_id,transcript_id
+PacBio,raw,SIRV,SIRV6,2739,2826,-,1,88,BambuGene17,BambuTx1480
