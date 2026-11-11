@@ -1,4 +1,0 @@
-set,gene_name,gene_id,chrom,win_s,win_e,n_drawn,n_de,n_novel,n_not_detected,n_hidden,figure
-event,EGFR · AS intronic lncRNA,ENSG00000146648.23,chr7,55009179,55221269,6,6,1,0,0,EGFR-AS-intronic-lncRNA.pdf
-event,ELOC · switch + AS intronic lncRNA,ENSG00000154582.20,chr8,73928065,73974418,19,19,1,0,0,ELOC-switch-AS-intronic-lncRNA.pdf
-event,UBE2I / UBE2I-AS1 · AS lncRNA,ENSG00000103275.24,chr16,1284019,1329066,11,11,0,0,0,UBE2I-UBE2I-AS1-AS-lncRNA.pdf

@@ -1,4 +1,0 @@
-platform,protocol,annotated,in_validated_table,in_bambu_table,detected_bambu,detected,not_detected,novel_raw,precision_raw,f1_raw,recall,novel_validated,precision_validated,f1_validated
-ont_cdna,ONT cDNA,164,110,164,110,110,54,0,1,0.8029197080291971,0.6707317073170732,0,1,0.8029197080291971
-ont_drs,ONT DRS,164,139,164,136,136,28,0,1,0.9066666666666667,0.8292682926829268,0,1,0.9066666666666667
-pb,PacBio,164,156,164,156,156,8,0,1,0.975,0.9512195121951219,0,1,0.975

@@ -1,8 +1,0 @@
-measure,rho,n_features
-group_means_all,0.8355557398643204,18749
-group_means_expressed_in_both,0.8725471829305786,15328
-single_within_min,0.9745478572859998,18749
-single_within_max,0.9910018047228498,18749
-single_between_median,0.8334326180236108,18749
-single_between_min,0.817590624298036,18749
-single_between_max,0.8360128910328277,18749

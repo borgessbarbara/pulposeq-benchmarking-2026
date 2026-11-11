@@ -1,8 +1,0 @@
-[gene] 78 sequins, 63 pass the filter, 24 ratio-1 controls, 39 truly DE
-[transcript] 162 sequins, 125 pass the filter, 58 ratio-1 controls, 66 truly DE
-# A tibble: 2 × 8
-  level      tested truly_de called    fdr sensitivity   auc slope
-  <chr>       <int>    <int>  <int>  <dbl>       <dbl> <dbl> <dbl>
-1 gene           63       39     39 0            1     1     0.993
-2 transcript    125       66     63 0.0317       0.924 0.998 1.04 
-Done: C:/Users/mbarb/OneDrive/paper/downstream/dong/results/sequins_edger

@@ -1,3 +1,0 @@
-set,gene_name,gene_id,chrom,win_s,win_e,n_drawn,n_de,n_novel,n_not_detected,n_hidden,figure
-paper,EGFR,ENSG00000146648.23,chr7,55009179,55221269,6,6,1,0,0,EGFR.pdf
-paper,UBE2I,ENSG00000103275.24,chr16,1284019,1329066,11,11,0,0,0,UBE2I.pdf
