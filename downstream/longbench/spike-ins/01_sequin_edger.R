@@ -1,20 +1,40 @@
 ## ===========================================================================
 ## 01_sequin_edger.R - LongBench sequin ground truth with edgeR      (Fig. 1d)
-##   oarfish version of before-oarfish-integration/longbench/01_sequin_edger.R:
-##   same test, truth and scoring; the counts are oarfish's, with the bootstrap
-##   replicates used as edgeR intends (downstream/helpers/oarfish_counts.R):
-##     transcript level  edgeR::catchOarfish()     -> counts / RTA overdispersion
-##     gene level        edgeR::catchOarfishGene() -> counts / gene overdispersion
-##                       (primary), and undivided summed counts (sensitivity check)
-##   The expression filter is applied to the undivided read counts; edgeR then
-##   tests the divided counts (not rounded). Needs edgeR >= 4.99.12.
+##   oarfish runs; the same script also runs on Bambu's counts of the SAME runs
+##   (Rscript 01_sequin_edger.R bambu) for the quantifier comparison (08)
+##
+## COUNTS (downstream/helpers/oarfish_counts.R + spikein_counts.R)
+##   oarfish  transcript level edgeR::catchOarfish(), gene level
+##            edgeR::catchOarfishGene() (edgeR >= 4.99.12): the bootstraps give
+##            each feature's read-to-transcript ambiguity (RTA) overdispersion.
+##            count_mode "divided"   = counts / overdispersion (PRIMARY; not
+##                                     rounded; Baldoni et al. 2024 NAR, 2024 NARGAB)
+##            count_mode "undivided" = estimated reads (sensitivity check: what
+##                                     the division changes)
+##   bambu    Bambu `counts`, count_mode "undivided" only (no bootstraps)
+##   The DE filter (>= min_count in >= min_samples libraries) uses `filter_counts`:
+##   "undivided" (default) = estimated reads, as dong/diff-exp/01_de_edger.R, so
+##   the sequins validate exactly the test used for the biology; "divided" = the
+##   counts edgeR tests, as filterByExpr in the published pipeline (Baldoni et al.
+##   2024 NARGAB). Change it together with 01_de_edger.R. Identification always
+##   uses the undivided estimated reads, rounded per library.
+##
+## WHAT SEQUINS TEST (the 4th question, after SIRV / ERCC in 02)
+##   Q4 differential abundance: every sequin isoform is spiked at a KNOWN
+##      concentration in Mix A and in Mix B, so its true log2FC (B / A) is
+##      known. Mix B went into SCLC-A samples, Mix A into LUAD + SCLC-P samples.
+##      A per-molecule capture bias (length, RT, size selection) is the same in
+##      both mixes, so it cancels in a ratio: sequins test RELATIVE accuracy,
+##      SIRV E0 tests ABSOLUTE accuracy.
 ##
 ## Test (as dong/02_sequin_edger.R and dong/01_de_edger.R):
 ##   edgeR v4 glmQLFit(robust = TRUE) -> glmTreat(lfc = 0.5), FDR 0.05;
 ##   display log2FC = predFC(prior.count = 2); filter >= min_count reads in
 ##   >= min_samples samples; library sizes AND TMM factors from the ratio-1
 ##   control sequins (|expected log2FC| < 0.25), so the normalisation never
-##   sees the sequins that are meant to change.
+##   sees the sequins that are meant to change. This also absorbs any change
+##   in total sequin input between libraries (LongBench raised the sequin
+##   input tenfold for DRS libraries run on secondary flow cells).
 ##   Contrast: Mix B (SCLC-A) vs Mix A (expected log2FC = log2(B / A)).
 ##
 ## Truth and scoring (identical to dong/02_sequin_edger.R)
@@ -25,19 +45,50 @@
 ##   and sensitivity. AUC ranks -log10(p) against truly DE.
 ##
 ## Identification (no DE tool involved): every sequin isoform in the mix
-## (Anaquin, 164) is a positive; detected = >= 1 read (rounded per sample,
-## summed) in the curated oarfish table; also reported before curation, for
-## every model oarfish quantified and for Bambu's own table. FP = novel BambuTx
-## models on chrIS, counted in Bambu's GTF (raw) and after pulposeq curation.
+## (Anaquin, 164) is a positive; FP = novel BambuTx models on chrIS, counted
+## in Bambu's GTF (raw) and after pulposeq validation.
 ##
-## Inputs : <run>/transcriptome/oarfish/ (catchOarfish), <run>/transcriptome/curated/
-##          counts + annotation, <run>/transcriptome/bambu/, data/samplesheet_*.csv, Anaquin
-## Outputs: spike-ins/results/sequins/
+## CHANGES vs previous version
+##   * detection rule harmonised with the SIRVs (02): detected = >= 3 reads in
+##     >= 2 libraries (was >= 1 read summed over all libraries; kept as
+##     `detected_any` for comparison). Applies to `detected` in both
+##     sequin_identification.csv and fold_change_summary_edger.csv
+##   * sensitivity is reported twice: among TESTED sequins (as before; it
+##     is conditional on passing the expression filter) and among ALL truly-DE
+##     sequins in the mix (`sensitivity_in_mix`; detection x DE)
+##   * robust fold-change agreement: Spearman rho, median |obs - exp|, and
+##     R2 / slope (a) without sequins that have 0 reads in every library of
+##     one mix (unshrunk logFC is then ~ +/-10 and dominates R2), and
+##     (b) on the shrunken log2FC (predFC, prior.count = 2)
+##   * sequin_fc_outliers.csv: transcript-level sequins with |obs - exp| > 2
+##     or a wrong-sign call, with every sibling isoform of the same sequin
+##     gene (reads per mix) and the gene-level result - to test whether
+##     outliers are read-assignment swaps between isoforms
+##   * sequin dose-response like the ERCCs: reads per library, 70% detection
+##     limit (logistic, >= 1 read per library vs that library's mix
+##     concentration), detection by concentration band
+##   * sequin_per_isoform.csv (expected A / B, reads per mix, detected)
+##   * novel_models_on_sequins.csv keeps its header when there are no models
+##   * sequin length (exonic, union of the validated GTFs) and relative capture
+##     efficiency (reads per amol, centred on the median detected isoform) in
+##     sequin_per_isoform.csv; Spearman rho of capture vs length per protocol
+##     in sequin_identification.csv (PacBio short-isoform depletion?)
+##   * sequin_fc_outliers.csv also lists genes with a gene-level error (a gene
+##     total is a capture-weighted sum of its isoforms, so per-isoform bias does
+##     NOT cancel at gene level when isoform proportions change between mixes)
+##
+## Inputs : <run>/transcriptome/oarfish/ (catchOarfish) or the Bambu tables,
+##          <run>/transcriptome/{bambu,curated/annotation}/ GTFs,
+##          data/samplesheet_*.csv, Anaquin
+## Outputs: spike-ins/results/sequins/ (oarfish; read by 07) or
+##          spike-ins/results/sequins_bambu/ (Bambu; read by 08):
 ##   edger/<platform>/<level>/<count_mode>/sequin_de.csv
-##   edger/sequin_de_results.csv           every sequin, every protocol / level / count mode
+##   edger/sequin_de_results.csv           every tested sequin, protocol / level / count mode
 ##   edger/fold_change_summary_edger.csv   one row per protocol x level x count mode
-##                                         (count_mode "divided" = primary analysis)
-##   sequin_identification.csv             identification on chrIS
+##   edger/sequin_fc_outliers.csv          outliers + sibling isoforms (primary count mode)
+##   sequin_identification.csv             identification + dose-response on chrIS
+##   sequin_per_isoform.csv                one row per sequin isoform x protocol
+##   sequin_detection_by_conc.csv          per-library detection by concentration band
 ##   novel_models_on_sequins.csv           novel models on chrIS, raw vs validated
 ## ===========================================================================
 
@@ -47,10 +98,16 @@ suppressPackageStartupMessages({
   library(Anaquin)
 })
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/longbench/00_paths.R")
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/longbench/00_paths.R")
 source(file.path(shared_helper_dir, "oarfish_counts.R"))   # read_oarfish()
+source(file.path(shared_helper_dir, "spikein_counts.R"))   # read_counts_q()
 plat_labels <- c(ont_cdna = "ONT cDNA", ont_drs = "ONT DRS", pb = "PacBio")
-seqroot <- seq_dir
+
+## "oarfish" (default, primary) or "bambu": Rscript 01_sequin_edger.R bambu,
+## or set it here when sourcing in RStudio
+quantifier <- quantifier_arg()
+seqroot <- quant_dir(seq_dir, quantifier)
+message("Quantifier: ", quantifier, " -> ", seqroot)
 outroot <- file.path(seqroot, "edger")
 dir.create(outroot, recursive = TRUE, showWarnings = FALSE)
 
@@ -65,19 +122,28 @@ lfc         <- 0.5    # LongBench DE settings
 min_count   <- 10     # LongBench DE settings
 min_samples <- 2      # LongBench DE settings
 ctrl_lfc    <- 0.25   # |expected log2FC| below this = ratio-1 control sequin
-## counts edgeR receives: "divided" = counts / RTA overdispersion (primary);
-## "undivided" = summed oarfish counts, gene level only, as a sensitivity check
-count_modes <- list(transcript = "divided", gene = c("divided", "undivided"))
+outlier_lfc <- 2      # |observed - expected log2FC| above this -> sequin_fc_outliers.csv
+## counts edgeR receives (see header); the first mode is the primary analysis
+count_modes  <- if (quantifier == "oarfish")
+  list(transcript = c("divided", "undivided"), gene = c("divided", "undivided")) else
+  list(transcript = "undivided", gene = "undivided")
+primary_mode <- count_modes$transcript[1]
+filter_counts <- "undivided"   # DE filter on estimated reads (as dong/diff-exp/01_de_edger.R) or "divided"
 
 ## identification (no DE tool involved: reads per sequin + novel models on chrIS)
-sequin_seq       <- "chrIS"   # sequin chromosome name in the genome / GTF
-sequin_min_reads <- 1         # an annotated sequin isoform counts as detected with >= this many reads
+sequin_seq    <- "chrIS"  # sequin chromosome name in the genome / GTF
+det_min_reads <- 3        # detected = >= this many reads ...
+det_min_libs  <- 2        # ... in >= this many libraries (same rule as the SIRVs, 02)
+det_rule_txt  <- sprintf(">=%d reads in >=%d libraries", det_min_reads, det_min_libs)
+lod_p         <- 0.7      # detection limit = concentration detected in 70% of libraries
+conc_breaks   <- c(0, 1, 10, 100, 1000, Inf)   # amol/ul bands for sequin_detection_by_conc.csv
 gtf_stage <- list(
   raw       = setNames(vapply(platforms, run_file, "", key = "bambu_novel_gtf"), platforms),
   validated = setNames(vapply(platforms, run_file, "", key = "validated_gtf"), platforms))
 tool        <- "edgeR"
 
 ## ---------------------------------------------- expected concentrations ---
+## Anaquin mixture table: concentration per isoform in Mix A and Mix B (amol/ul)
 data("RnaQuinIsoformMixture", package = "Anaquin")
 iso_mix <- as_tibble(RnaQuinIsoformMixture) %>%
   transmute(id = as.character(Name), A = MixA, B = MixB)
@@ -87,17 +153,33 @@ gene_mix <- iso_mix %>%
   summarise(A = sum(A), B = sum(B), .groups = "drop") %>%
   transmute(id = gene, A, B)
 expected <- list(transcript = iso_mix, gene = gene_mix)
+stopifnot("Anaquin mixture: non-positive concentration" =
+            all(iso_mix$A > 0 & iso_mix$B > 0))
+## sequin length from the Anaquin mixture table when it has one (all 164);
+## otherwise from the validated GTFs (below)
+anaquin_len <- if ("Length" %in% names(RnaQuinIsoformMixture))
+  setNames(as.numeric(RnaQuinIsoformMixture$Length), as.character(RnaQuinIsoformMixture$Name)) else NULL
 
 ## -------------------------------------------------------------- inputs ----
-## sequin rows of the curated oarfish counts: undivided reads, divided counts
-## and the RTA overdispersion (catchOarfish / catchOarfishGene)
-read_sequins <- function(plat, lv) {
-  x <- read_oarfish(run_dir[[plat]], lv, cache_dir = oarfish_cache)
-  s <- grepl("^R[12]_", rownames(x$counts))
-  list(reads   = x$counts[s, , drop = FALSE],
-       divided = x$divided[s, , drop = FALSE],
-       od      = x$overdispersion[s])
+## sequin rows of one run: list(reads, divided, od) from the chosen quantifier
+## (curated = FALSE: every model before pulposeq's curation)
+read_sequins <- function(plat, lv, curated = TRUE)
+  read_counts_q(run_dir[[plat]], lv, quantifier, rows = "^R[12]_",
+                curated = curated, cache_dir = oarfish_cache)
+
+## rows for `ids`, 0 for anything absent from the matrix (= not in the curated
+## set: too few reads)
+take <- function(m, ids) {
+  out <- matrix(0, length(ids), ncol(m), dimnames = list(ids, colnames(m)))
+  hit <- intersect(ids, rownames(m))
+  out[hit, ] <- m[hit, ]
+  out
 }
+
+## detected = >= min_reads in >= min_libs libraries (named logical, one per row);
+## estimated reads are rounded per library first
+detect <- function(x, min_reads = det_min_reads, min_libs = det_min_libs)
+  rowSums(round(x) >= min_reads) >= min_libs
 
 sample_mix <- function(samples, sheet) {
   ss  <- read.csv(file.path(data_dir, sheet))
@@ -125,8 +207,19 @@ score_calls <- function(t) {
                                TRUE                                            ~ "true negative"))
 }
 
-summarise_calls <- function(t) {
-  fit <- lm(obs_lfc ~ exp_lfc, data = t)
+r2_slope <- function(y, x) {
+  if (sum(is.finite(y) & is.finite(x)) < 3)
+    return(c(slope = NA_real_, intercept = NA_real_, r2 = NA_real_))
+  f <- lm(y ~ x)
+  c(slope = unname(coef(f)[2]), intercept = unname(coef(f)[1]), r2 = summary(f)$r.squared)
+}
+
+## `truly_de_in_mix`: truly-DE sequins in the whole mix at this level, tested or not
+summarise_calls <- function(t, truly_de_in_mix) {
+  all_fit    <- r2_slope(t$obs_lfc, t$exp_lfc)
+  nz         <- !t$one_mix_zero
+  nz_fit     <- r2_slope(t$obs_lfc[nz], t$exp_lfc[nz])
+  shr_fit    <- r2_slope(t$disp_lfc, t$exp_lfc)
   t %>%
     summarise(tested      = n(),
               truly_de    = sum(truth),
@@ -136,16 +229,27 @@ summarise_calls <- function(t) {
               wrong_sign  = sum(outcome == "wrong sign"),
               false_neg   = sum(outcome == "false negative"),
               true_neg    = sum(outcome == "true negative"),
-              sensitivity = true_pos / max(truly_de, 1),
+              sensitivity = true_pos / max(truly_de, 1),            # among TESTED sequins
               fdr         = if (n_called > 0) (false_pos + wrong_sign) / n_called else NA_real_,
               precision   = if (n_called > 0) true_pos / n_called else NA_real_,
               f1          = if (is.na(precision) || precision + sensitivity == 0) NA_real_ else
                               2 * precision * sensitivity / (precision + sensitivity),
               auc         = auc_fn(-log10(pvalue), truth),
-              slope       = unname(coef(fit)[2]),
-              intercept   = unname(coef(fit)[1]),
-              r2          = summary(fit)$r.squared,
-              rmse        = sqrt(mean((obs_lfc - exp_lfc)^2)))
+              slope       = unname(all_fit["slope"]),
+              intercept   = unname(all_fit["intercept"]),
+              r2          = unname(all_fit["r2"]),
+              rmse        = sqrt(mean((obs_lfc - exp_lfc)^2)),
+              ## robust agreement (outliers below dominate R2 and slope)
+              spearman        = cor(obs_lfc, exp_lfc, method = "spearman"),
+              median_abs_err  = median(abs(obs_lfc - exp_lfc)),
+              n_one_mix_zero  = sum(one_mix_zero),
+              slope_no_zero   = unname(nz_fit["slope"]),
+              r2_no_zero      = unname(nz_fit["r2"]),
+              slope_shrunk    = unname(shr_fit["slope"]),
+              r2_shrunk       = unname(shr_fit["r2"]),
+              ## detection x DE: TP among every truly-DE sequin in the mix
+              truly_de_in_mix    = truly_de_in_mix,
+              sensitivity_in_mix = true_pos / max(truly_de_in_mix, 1))
 }
 
 ## ------------------------------------------------------------- edgeR ------
@@ -173,37 +277,53 @@ run_edger <- function(m, mix, ctrl, lab) {
   tt     <- topTags(glmTreat(fit, coef = cn, lfc = lfc), n = Inf, sort.by = "none")$table
   shr    <- predFC(estimateDisp(y, design), design, prior.count = 2)[, cn]
   eff    <- y$samples$lib.size * y$samples$norm.factors
-  tibble(id = rownames(tt), obs_lfc = tt$logFC, disp_lfc = unname(shr[rownames(tt)]),
+  ids    <- rownames(tt)
+  a      <- mix == "A"
+  tibble(id = ids, obs_lfc = tt$logFC, disp_lfc = unname(shr[ids]),
          pvalue = tt$PValue, padj = tt$FDR,
-         mean = rowMeans(edgeR::cpm(y)[rownames(tt), , drop = FALSE]) * mean(eff) / 1e6)
+         mean = rowMeans(edgeR::cpm(y)[ids, , drop = FALSE]) * mean(eff) / 1e6,
+         ## raw reads per library in each mix; 0 in every library of one mix
+         ## makes the unshrunk logFC ~ +/-10
+         mean_A = rowMeans(m[ids, a, drop = FALSE]),
+         mean_B = rowMeans(m[ids, !a, drop = FALSE]),
+         one_mix_zero = mean_A == 0 | mean_B == 0)
 }
 
 ## ----------------------------------------------------------------- run ----
-res_all <- list(); fc_all <- list()
+res_all <- list(); fc_all <- list(); mix_reads <- list()
 
 for (plat in platforms) {
   for (lv in levels_to_run) {
-    x   <- read_sequins(plat, lv)
-    r   <- x$reads
-    mix <- sample_mix(colnames(r), sheets[[plat]])
-    e   <- expected[[lv]]
-    ids <- intersect(rownames(r), e$id)
-    e   <- e[match(ids, e$id), ]
-
-    exp_all  <- setNames(log2(e$B / e$A), ids)
+    x     <- read_sequins(plat, lv)
+    e     <- expected[[lv]]
+    r_mix <- take(x$reads, e$id)                       # every sequin in the mix, 0 if absent
+    mix   <- sample_mix(colnames(r_mix), sheets[[plat]])
+    exp_all  <- setNames(log2(e$B / e$A), e$id)
     ctrl_all <- abs(exp_all) < ctrl_lfc
-    detected <- sum(rowSums(r[ids, , drop = FALSE]) > 0)
-    ## filter on reads (undivided), so every count mode tests the same sequins
-    keep     <- rowSums(r[ids, , drop = FALSE] >= min_count) >= min_samples
+    det_all  <- detect(r_mix)
+    a        <- mix == "A"
+
+    ## estimated reads per mix for every sequin (siblings of outliers, tested or not)
+    mix_reads[[length(mix_reads) + 1]] <-
+      tibble(platform = plat, level = lv, id = e$id, exp_lfc = unname(exp_all),
+             mean_A = rowMeans(r_mix[, a, drop = FALSE]),
+             mean_B = rowMeans(r_mix[, !a, drop = FALSE]),
+             detected = unname(det_all),
+             overdispersion = unname(x$od[e$id]))
 
     for (mode in count_modes[[lv]]) {
       lab    <- paste(plat_labels[[plat]], lv, mode, "(edgeR)")
       outdir <- file.path(outroot, plat, lv, mode)
       dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-      m  <- if (mode == "divided") x$divided else x$reads
-      m2 <- m[ids, , drop = FALSE][keep, , drop = FALSE]
-      message(sprintf("[%s] %d sequins, %d pass the filter, %d ratio-1 controls, %d truly DE",
-                      lab, length(ids), nrow(m2), sum(ctrl_all[keep]), sum(abs(exp_all[keep]) > lfc)))
+
+      ## counts edgeR tests, and the counts the filter is applied to (`filter_counts`)
+      m_mix <- take(if (mode == "divided") x$divided else x$reads, e$id)
+      f_mix <- if (mode == "divided" && filter_counts == "divided") m_mix else r_mix
+      keep  <- rowSums(f_mix >= min_count) >= min_samples
+      m2    <- m_mix[keep, , drop = FALSE]
+      message(sprintf("[%s] %d sequins in the mix, %d detected (%s), %d pass the DE filter, %d ratio-1 controls, %d truly DE",
+                      lab, nrow(m_mix), sum(det_all), det_rule_txt, nrow(m2),
+                      sum(ctrl_all[keep]), sum(abs(exp_all[keep]) > lfc)))
 
       ## ---- DE: Mix B vs Mix A ----
       t <- run_edger(m2, mix, ctrl_all[keep], lab) %>%
@@ -211,24 +331,31 @@ for (plat in platforms) {
                overdispersion = unname(x$od[id])) %>%
         filter(!is.na(pvalue), is.finite(obs_lfc)) %>%
         score_calls() %>%
-        mutate(tool = tool, platform = plat, level = lv, count_mode = mode, .before = 1)
+        mutate(tool = tool, quantifier = quantifier, platform = plat, level = lv,
+               count_mode = mode, .before = 1)
       write_csv(t, file.path(outdir, "sequin_de.csv"))
       res_all[[length(res_all) + 1]] <- t
 
-      fc_all[[length(fc_all) + 1]] <- summarise_calls(t) %>%
-        mutate(tool = tool, platform = plat, level = lv, count_mode = mode,
-               detected = detected,
-               median_overdispersion = median(x$od[ids][keep]), .before = 1)
+      fc_all[[length(fc_all) + 1]] <- summarise_calls(t, sum(abs(exp_all) > lfc)) %>%
+        mutate(tool = tool, quantifier = quantifier, platform = plat, level = lv,
+               count_mode = mode,
+               detection_rule = det_rule_txt,
+               detected       = sum(det_all),                         # >= 3 reads in >= 2 libraries
+               detected_any   = sum(rowSums(round(r_mix)) >= 1),      # >= 1 read in total
+               median_overdispersion = median(x$od[rownames(m2)], na.rm = TRUE),
+               .before = 1)
     }
   }
 }
 
-res_all <- bind_rows(res_all)
-fc_all  <- bind_rows(fc_all)
+res_all   <- bind_rows(res_all)
+fc_all    <- bind_rows(fc_all)
+mix_reads <- bind_rows(mix_reads)
 write_csv(res_all, file.path(outroot, "sequin_de_results.csv"))
 write_csv(fc_all,  file.path(outroot, "fold_change_summary_edger.csv"))
-print(dplyr::select(fc_all, platform, level, count_mode, tested, truly_de, n_called, wrong_sign,
-                    sensitivity, precision, f1, auc, slope, r2), n = Inf)
+print(dplyr::select(fc_all, platform, level, count_mode, detected, tested, truly_de, n_called, wrong_sign,
+                    sensitivity, sensitivity_in_mix, precision, f1, auc,
+                    slope, r2, n_one_mix_zero, r2_no_zero, r2_shrunk, spearman), n = Inf, width = Inf)
 
 ## ---------------------------------------------- identification on chrIS ---
 ## exon records of one GTF on the sequin chromosome
@@ -261,43 +388,65 @@ prf <- function(tp, fn, fp) {
   c(precision = p, recall = r, f1 = f1)
 }
 
-ident_all <- list(); novel_seq_all <- list()
+## header kept when no novel model exists anywhere
+novel_template <- tibble(platform = character(), protocol = character(), stage = character(),
+                         transcript_id = character(), gene_id = character(), strand = character(),
+                         exonic_len = integer(), exons = integer(), start = integer(), end = integer(),
+                         same_strand_overlap = character(), opposite_strand_overlap = character(),
+                         candidate_mirror = logical())
+
+## sequin lengths: Anaquin's table when it has them, else the union of all
+## protocols' validated GTFs (a validated GTF only keeps sequins with reads)
+seq_len_tbl <- if (!is.null(anaquin_len))
+  tibble(transcript_id = names(anaquin_len), exonic_len = unname(anaquin_len)) else
+  map_dfr(platforms, function(pl)
+    tx_spans(filter(read_gtf_seq(gtf_stage$validated[[pl]], sequin_seq),
+                    !grepl("^BambuTx", transcript_id)))) %>%
+  distinct(transcript_id, .keep_all = TRUE) %>%
+  dplyr::select(transcript_id, exonic_len)
+n_nolen <- sum(!iso_mix$id %in% seq_len_tbl$transcript_id)
+if (n_nolen > 0)
+  message(sprintf("%d sequin isoforms have no length: %s", n_nolen,
+                  paste(setdiff(iso_mix$id, seq_len_tbl$transcript_id), collapse = ", ")))
+
+ident_all <- list(); novel_seq_all <- list(); per_iso_all <- list(); by_conc_all <- list()
 for (plat in platforms) {
   prot <- plat_labels[[plat]]
 
   ## positives = ALL sequin isoforms in the mix (Anaquin, 164); one missing
-  ## from a count table had no reads there. Reads are rounded per sample,
-  ## then summed - the same rule as `detected` in fold_change_summary.csv.
-  sequin_reads <- function(f) {
-    x <- read.table(f, header = TRUE, row.names = 1, sep = "\t", check.names = FALSE)
-    x$GENEID <- NULL
-    obs <- rowSums(round(as.matrix(x[grepl("^R[12]_", rownames(x)), , drop = FALSE])))
-    r <- setNames(numeric(nrow(iso_mix)), iso_mix$id)
-    hit <- intersect(names(obs), iso_mix$id)
-    r[hit] <- obs[hit]
-    list(reads = r, in_table = length(hit))
-  }
-  ## curated oarfish table (the counts the DE analysis uses, undivided)
-  val <- sequin_reads(run_file(plat, "oarfish_tx"))
-  seq_reads <- val$reads
-  det <- seq_reads >= sequin_min_reads
-  tp  <- sum(det); fn <- sum(!det)
+  ## from a count table had no reads there
+  xv    <- read_sequins(plat, "transcript")              # curated set, undivided reads
+  m_val <- xv$reads
+  sm    <- round(take(m_val, iso_mix$id))                # rows in iso_mix order, reads rounded
+  det   <- detect(sm)
+  tp    <- sum(det); fn <- sum(!det)
   if (fn > 0)
-    message(sprintf("[%s] sequin isoforms not detected (%d of %d): %s", prot, fn, length(det),
-                    paste(head(names(seq_reads)[!det], 20), collapse = ", ")))
+    message(sprintf("[%s] sequin isoforms not detected (%s; %d of %d): %s", prot, det_rule_txt,
+                    fn, length(det), paste(head(names(det)[!det], 30), collapse = ", ")))
 
-  ## before curation: every model oarfish quantified, and Bambu's own table
-  all_oar <- read_oarfish(run_dir[[plat]], "transcript", curated = FALSE, cache_dir = oarfish_cache)$counts
-  oar_obs <- rowSums(round(all_oar[grepl("^R[12]_", rownames(all_oar)), , drop = FALSE]))
-  det_oar_all <- sum(oar_obs[intersect(names(oar_obs), iso_mix$id)] >= sequin_min_reads)
-  f_raw <- run_file(plat, "bambu_counts_tx")
-  raw   <- if (file.exists(f_raw)) sequin_reads(f_raw) else NULL
-  det_raw <- if (is.null(raw)) NA_integer_ else sum(raw$reads >= sequin_min_reads)
-  if (det_oar_all > tp)
-    message(sprintf("[%s] %d sequin isoforms have oarfish reads but are not in the curated set: %s",
-                    prot, det_oar_all - tp,
-                    paste(head(setdiff(names(oar_obs)[oar_obs >= sequin_min_reads],
-                                       names(seq_reads)[det]), 20), collapse = ", ")))
+  ## does curation remove annotated sequins? the same quantifier before curation
+  ## (oarfish: every model in the index; Bambu: its raw table)
+  m_rawt  <- tryCatch(read_sequins(plat, "transcript", curated = FALSE)$reads,
+                      error = function(e) { message("[", prot, "] ", conditionMessage(e)); NULL })
+  det_raw <- if (is.null(m_rawt)) NA_integer_ else sum(detect(take(m_rawt, iso_mix$id)))
+  if (!is.null(m_rawt) && det_raw > tp)
+    message(sprintf("[%s] %d sequin isoforms are detected before curation but not after",
+                    prot, det_raw - tp))
+
+  ## ---- dose-response: per library, >= 1 read vs that library's mix concentration ----
+  mix  <- sample_mix(colnames(sm), sheets[[plat]])
+  cmat <- vapply(as.character(mix), function(mx) if (mx == "A") iso_mix$A else iso_mix$B,
+                 numeric(nrow(iso_mix)))                 # sequins x libraries, same layout as sm
+  hit  <- as.vector(sm >= 1)
+  lc   <- log2(as.vector(cmat))
+  lfit <- suppressWarnings(glm(hit ~ lc, family = binomial))
+  l_b0 <- unname(coef(lfit)[1]); l_b1 <- unname(coef(lfit)[2])
+  lod  <- if (is.finite(l_b1) && l_b1 > 0) 2^((qlogis(lod_p) - l_b0) / l_b1) else NA_real_
+  by_conc_all[[plat]] <- tibble(conc = as.vector(cmat), hit = hit) %>%
+    mutate(band = cut(conc, conc_breaks, right = FALSE, dig.lab = 5)) %>%
+    group_by(band) %>%
+    summarise(pairs = n(), frac_libraries_with_reads = mean(hit), .groups = "drop") %>%
+    mutate(platform = plat, protocol = prot, .before = 1)
 
   ## annotated sequins on chrIS (from the validated GTF) - also checks the name
   val_ex <- read_gtf_seq(gtf_stage$validated[[plat]], sequin_seq)
@@ -306,13 +455,42 @@ for (plat in platforms) {
     stop(sprintf("[%s] no annotated transcripts on '%s' in the validated GTF - set `sequin_seq`",
                  prot, sequin_seq))
 
-  row <- tibble(platform = plat, protocol = prot,
-                annotated = length(seq_reads),                 # 164 (Anaquin)
-                in_validated_table = val$in_table,             # curated oarfish table
-                in_bambu_table = if (is.null(raw)) NA_integer_ else raw$in_table,
-                detected_oarfish_all_models = det_oar_all,     # >= 1 oarfish read before curation
-                detected_bambu = det_raw,                      # >= 1 Bambu read (Bambu's raw table)
-                detected = tp, not_detected = fn)              # curated oarfish table
+  ## capture efficiency = reads per amol/ul, mean of the two mixes, log2,
+  ## centred on the median DETECTED isoform (0 = typical; -5 = 32x fewer reads
+  ## than a typical sequin at the same input). Undetected isoforms: NA.
+  rA  <- rowMeans(sm[, mix == "A", drop = FALSE])
+  rB  <- rowMeans(sm[, mix == "B", drop = FALSE])
+  cap <- log2((rA / iso_mix$A + rB / iso_mix$B) / 2)
+  cap[!det | !is.finite(cap)] <- NA
+  cap <- cap - median(cap, na.rm = TRUE)
+  len <- seq_len_tbl$exonic_len[match(iso_mix$id, seq_len_tbl$transcript_id)]
+  cap_rho <- suppressWarnings(cor(cap, log2(len), method = "spearman", use = "complete.obs"))
+
+  per_iso_all[[plat]] <- tibble(platform = plat, protocol = prot, id = iso_mix$id,
+                                gene = sub("_[0-9]+$", "", iso_mix$id),
+                                len = len,
+                                conc_A = iso_mix$A, conc_B = iso_mix$B,
+                                exp_lfc = log2(iso_mix$B / iso_mix$A),
+                                reads_A = rA, reads_B = rB,
+                                libs_with_reads = rowSums(sm >= 1),
+                                detected = unname(det),
+                                detected_any = rowSums(sm) >= 1,
+                                capture_log2 = cap,
+                                overdispersion = unname(xv$od[iso_mix$id]))
+
+  row <- tibble(quantifier = quantifier, platform = plat, protocol = prot,
+                annotated = nrow(iso_mix),                     # 164 (Anaquin)
+                detection_rule = det_rule_txt,
+                in_curated_table = length(intersect(rownames(m_val), iso_mix$id)),
+                in_uncurated_table = if (is.null(m_rawt)) NA_integer_ else
+                                   length(intersect(rownames(m_rawt), iso_mix$id)),
+                detected_before_curation = det_raw,            # same rule and quantifier
+                detected = tp, not_detected = fn,
+                detected_any = sum(rowSums(sm) >= 1),          # previous rule: >= 1 read in total
+                sequin_reads_per_library = mean(colSums(sm)),  # depth confounds the detection limit
+                lod70_amol_ul = lod,                           # >= 1 read in 70% of libraries
+                lod70_logistic_slope = l_b1,
+                capture_length_rho = cap_rho)                  # Spearman, detected isoforms
   for (st in c("raw", "validated")) {
     ex  <- if (st == "validated") val_ex else read_gtf_seq(gtf_stage$raw[[plat]], sequin_seq)
     nov <- tx_spans(filter(ex, grepl("^BambuTx", transcript_id)))
@@ -341,9 +519,52 @@ for (plat in platforms) {
   ident_all[[plat]] <- row
 }
 ident_all     <- bind_rows(ident_all)
-novel_seq_all <- bind_rows(novel_seq_all)
+novel_seq_all <- bind_rows(novel_template, novel_seq_all)
+per_iso_all   <- bind_rows(per_iso_all)
+by_conc_all   <- bind_rows(by_conc_all)
 write_csv(ident_all,     file.path(seqroot, "sequin_identification.csv"))
-write_csv(novel_seq_all, file.path(seqroot, "novel_models_on_sequins.csv"))   # empty if none
+write_csv(novel_seq_all, file.path(seqroot, "novel_models_on_sequins.csv"))   # header only if none
+write_csv(per_iso_all,   file.path(seqroot, "sequin_per_isoform.csv"))
+write_csv(by_conc_all,   file.path(seqroot, "sequin_detection_by_conc.csv"))
 print(ident_all, width = Inf)
+print(by_conc_all, n = Inf)
+
+## ---- fold-change outliers and their sibling isoforms (transcript + gene level) ----
+## Two ways a fold change can go wrong although a per-molecule bias cancels
+## in a ratio:
+##   isoform level - reads assigned to the wrong sibling isoform, and the
+##     error depends on the siblings' relative abundance, which differs
+##     between Mix A and Mix B (R2_18 in every protocol)
+##   gene level    - the gene total is a capture-weighted sum of its isoforms;
+##     when siblings with very different capture (capture_log2, len) change in
+##     opposite directions, the gene follows the well-captured one (PacBio:
+##     R1_13, R1_91, R2_41)
+tx_res <- res_all %>% filter(level == "transcript", count_mode == primary_mode) %>%
+  mutate(gene = sub("_[0-9]+$", "", id))
+out_genes <- bind_rows(
+  tx_res %>% filter(abs(obs_lfc - exp_lfc) > outlier_lfc | outcome == "wrong sign"),
+  res_all %>% filter(level == "gene", count_mode == primary_mode,
+                     abs(obs_lfc - exp_lfc) > outlier_lfc | outcome %in% c("wrong sign", "false positive")) %>%
+    mutate(gene = id)) %>%
+  distinct(platform, gene)
+gene_res <- res_all %>% filter(level == "gene", count_mode == primary_mode) %>%
+  transmute(platform, gene = id, gene_exp_lfc = exp_lfc, gene_obs_lfc = obs_lfc,
+            gene_outcome = outcome)
+outliers <- mix_reads %>%
+  filter(level == "transcript") %>%
+  mutate(gene = sub("_[0-9]+$", "", id)) %>%
+  semi_join(out_genes, by = c("platform", "gene")) %>%
+  left_join(dplyr::select(tx_res, platform, id, obs_lfc, padj, outcome), by = c("platform", "id")) %>%
+  left_join(gene_res, by = c("platform", "gene")) %>%
+  left_join(dplyr::select(per_iso_all, platform, id, len, capture_log2), by = c("platform", "id")) %>%
+  mutate(protocol = unname(plat_labels[platform]), tested = !is.na(outcome)) %>%
+  dplyr::select(gene, id, protocol, len, capture_log2, overdispersion, exp_lfc, obs_lfc, padj, outcome, tested,
+                mean_A, mean_B, gene_exp_lfc, gene_obs_lfc, gene_outcome) %>%
+  arrange(gene, id, protocol)
+write_csv(outliers, file.path(outroot, "sequin_fc_outliers.csv"))
+if (nrow(outliers)) {
+  message("Fold-change outliers (|obs - exp| > ", outlier_lfc, " or wrong sign) and their siblings:")
+  print(outliers, n = Inf, width = Inf)
+}
 
 message("Done: ", outroot)

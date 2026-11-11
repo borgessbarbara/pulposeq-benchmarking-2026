@@ -3,23 +3,28 @@
 ## Sourced by each script in downstream/longbench/<analysis>/; edit here only.
 ##
 ## Inputs  (read only): the pulposeq run folders run_dir[] (the --outdir of the
-##                      runs in config-runs/longbench/, made with --run_oarfish true)
-##                      and downstream/longbench/data/ (sample sheets + Lexogen SIRV design)
+##                      runs in config-runs/longbench/, made with --run_oarfish true),
+##                      downstream/longbench/data/ (sample sheets) and the repository's
+##                      references/ (Lexogen SIRV design)
 ## Outputs (written)  : <analysis>/results/ and <analysis>/figures/ inside
 ##                      downstream/longbench/. Nothing else is written.
 ## ===========================================================================
 
-base     <- "C:/Users/mbarb/OneDrive/paper"              # holds the run folders and downstream/
-lb_dir   <- file.path(base, "downstream/longbench")
+project  <- "C:/Users/mbarb/OneDrive/pulposeq-oarfish"   # the run folders + the clone of this repo
+repo     <- file.path(project, "pulposeq-benchmarking-2026")
+base     <- repo                                         # downstream/ and references/ live here
+lb_dir   <- file.path(repo, "downstream/longbench")
 
 helper_dir <- file.path(lb_dir, "helpers")
-data_dir   <- file.path(lb_dir, "data")                  # samplesheet_*.csv, SIRV design .xlsx
-shared_helper_dir <- file.path(base, "downstream/helpers")  # oarfish_counts.R
+data_dir   <- file.path(lb_dir, "data")                  # samplesheet_*.csv
+ref_dir    <- file.path(repo, "references")              # reference files shipped with the repo
+sirv_design <- file.path(ref_dir, "SIRV_Set4_Norm_sequence-design-overview_20210507a.xlsx")
+shared_helper_dir <- file.path(repo, "downstream/helpers")  # oarfish_counts.R, spikein_counts.R
 
-## pulposeq run folders (one per LongBench protocol): the --outdir of each run
-## (config-runs/longbench/run_*.yml write to <protocol>/results_oarfish)
+## pulposeq run folders (one per LongBench protocol): the --outdir of each run,
+## i.e. <project>/ont_cdna, <project>/ont_drs, <project>/pb
 platforms <- c("ont_cdna", "ont_drs", "pb")
-run_dir   <- setNames(file.path(base, platforms, "results_oarfish"), platforms)
+run_dir   <- setNames(file.path(project, platforms), platforms)
 
 ## pulposeq output files, relative to a run folder (pulposeq transcriptome/ layout)
 pp <- list(

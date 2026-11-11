@@ -33,7 +33,7 @@ suppressPackageStartupMessages({
 ## -------------------------------------------------------------- paths -----
 ## Inputs : the Dong run folder (pulposeq --outdir, data_dir) + data/samplesheet.csv
 ## Outputs: downstream/dong/diff-exp/results/ (every output of this script)
-source("C:/Users/mbarb/OneDrive/paper/downstream/dong/00_paths.R")   # data_dir, sheet, de_dir
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/dong/00_paths.R")   # data_dir, sheet, de_dir
 source(file.path(shared_helper_dir, "oarfish_counts.R"))              # read_oarfish()
 outroot  <- de_dir
 

@@ -20,4 +20,4 @@ min_total_counts: 5
 
 run_oarfish: true
 
-oarfish_num_bootstraps: 50
+oarfish_num_bootstraps: 20

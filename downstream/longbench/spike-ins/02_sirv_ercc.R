@@ -1,10 +1,25 @@
 ## ===========================================================================
 ## 02_sirv_ercc.R - SIRV-Set 4 benchmark per protocol (transcript level)  (Fig. 1b, c)
-##   oarfish version of before-oarfish-integration/longbench/02_sirv_ercc.R:
-##   same analysis on the curated oarfish counts (undivided: this measures
-##   quantification accuracy, nothing is tested), plus each SIRV isoform's RTA
-##   overdispersion from the bootstraps (edgeR::catchOarfish, via
-##   downstream/helpers/oarfish_counts.R). Needs edgeR >= 4.99.12.
+##   oarfish runs; the same script also runs on Bambu's counts of the SAME runs
+##   (Rscript 02_sirv_ercc.R bambu) for the quantifier comparison (08)
+##
+## THREE QUESTIONS (spike-ins are an answer key: amounts are known)
+##   Q1 identification : are all spike-ins in the mix recovered, and does the
+##                       pipeline avoid inventing models?   (SIRV P / R / F1)
+##   Q2 abundance      : are equimolar molecules equally abundant, and how does
+##                       that change with length?          (SIRV log2 obs/exp)
+##   Q3 dose-response  : does signal rise with input, and what is the lowest
+##                       input still detected?              (ERCC)
+##
+## Counts: UNDIVIDED estimated reads per transcript (nothing is tested here),
+##   quantifier "oarfish" (default; downstream/helpers/oarfish_counts.R) or
+##   "bambu" (Bambu `counts`), both from pulposeq's curated tables. They are
+##   EM-estimated reads (full-length + partial), NOT molecules. With oarfish,
+##   each isoform's read-to-transcript ambiguity (RTA) overdispersion from the
+##   bootstraps (edgeR::catchOarfish; >= 1, 1 = no ambiguity) is reported
+##   next to its abundance error: assignment errors should come with high
+##   overdispersion, capture (library) errors with low overdispersion.
+##   Needs edgeR >= 4.99.12 (catchOarfish via read_oarfish()).
 ##
 ## Expected amounts: Lexogen SIRV_Set4_Norm_sequence-design-overview_20210507a.xlsx
 ##   SIRV E0     69 isoforms, all 60 amol/ul (equimolar)
@@ -13,64 +28,74 @@
 ##               concentration range; every sample received the same mix
 ##
 ## SIRV annotation given to pulposeq: Lexogen "correct" (c) annotation =
-## exactly the 69 E0 isoforms. The design sheet flags each isoform as part of
-## the correct (c, 69), insufficient (i, 44) and/or over-annotated (o, 100)
-## annotation; the 31 isoforms that are only in "o" (SIRV104, SIRV110, ...)
-## are not in the mix AND not in the GTF used here, so they cannot receive
-## reads. The script detects this from the count table and then reports the
-## decoy test as not applicable instead of as a passed specificity check.
+## exactly the 69 E0 isoforms. The 31 isoforms only in the over-annotated "o"
+## set are not in the mix AND not in the GTF used here, so they cannot receive
+## reads: the decoy test is reported as not applicable (a stated limitation).
+## The "insufficient" (i) annotation (discovery of the 25 missing E0 isoforms)
+## was not run either.
+##
+## Definitions (identical for both quantifiers and to the Bambu-only version)
+##   * ONE denominator for every SIRV statistic: CPM within the 84 SIRVs
+##     (E0 + long), expected share = 1/84 (as in LongBench 03_Bulk_quantification)
+##   * two-tier detection, set once below:
+##       detected   = >= det_min_reads reads in >= det_min_libs libraries
+##                    (counts rounded per library: oarfish / Bambu are fractional)
+##       quantified = detected AND |median log2(obs/exp)| <= 3 (within 8-fold,
+##                    both directions)
+##     F1 therefore measures PRESENCE, not abundance accuracy
+##   * ONE value per SIRV isoform everywhere (figure dots, length classes,
+##     summary, Fig. 1b label): the median across libraries of the per-library
+##     log2(obs/exp)
+##   * detection-rule sensitivity grid (detection_grid.csv), incl. a
+##     LongBench-like rule (filterByExpr min.count = 5, min.total.count = 15)
+##   * length classes (E0 < 1 kb, E0 1-2.5 kb, long SIRV)
+##   * ERCC: fit on ERCCs passing the detection rule; hi-concentration fit,
+##     Pearson r over ALL ERCCs, residual-vs-length rho, reads per library
 ##
 ## Per protocol (ONT cDNA, ONT DRS, PacBio):
-##   1. SIRV E0 isoform accuracy: log2(observed / expected) per isoform and
-##      sample; within 2-fold, lost (< 1/8 expected), unstable across samples
-##      (SD of log2 ratio > 1, e.g. EM splits like SIRV701 / SIRV705)
-##   2. reads on over-annotation-only SIRV isoforms - only if they are in the
-##      annotation (otherwise NA, see above)
-##   3. novel models (BambuTx*) on spike-in sequences, at two stages, as in
-##      the dong sequin check (sequin_mirror_isoforms.md):
-##        raw        Bambu discovery (bambu/bambu_novel_transcripts.gtf)
-##        validated  pulposeq output (transcriptome/curated/annotation/BambuOutput_annotations_validated.gtf)
-##      With the SIRV loci correctly annotated, every novel SIRV model is a
-##      false positive; ERCCs are single-exon, so any novel ERCC model is an
-##      artefact too
-##   4. SIRV identification: precision / recall / F1, for raw and validated
-##        positives = 69 E0 + 15 long SIRVs (all in the mix)
-##        TP = positives with >= sirv_min_reads reads (summed over samples)
-##        FN = positives below that
-##        FP = novel SIRV models at that stage (+ reads on over-annotation-only
-##             isoforms, when those are in the annotation)
-##   5. length bias: E0 + long SIRVs are all equimolar, so reads per molecule
-##      vs transcript length (191 nt - 12 kb) shows the length bias directly
-##   6. ERCC: dose response (log2 CPM vs log2 input, linear fit), detection limit
-##      (70% detection, logistic fit as in Anaquin) and detection above fixed
-##      concentrations. No F1: every annotated ERCC is in the mix (no negative
-##      set) and all samples share one mix (no differential truth), so recall
-##      would only reflect sequencing depth.
+##   1. SIRV accuracy (84 SIRVs): log2(observed / expected) per isoform and
+##      library; within 2-fold, within 8-fold, lost (median < 1/8 expected),
+##      unstable (SD of log2 ratio > 1)
+##   2. reads on over-annotation-only SIRV isoforms - only if annotated (else NA)
+##   3. novel models (BambuTx*) on spike-in sequences, raw Bambu vs validated
+##   4. SIRV identification P / R / F1, raw and validated
+##        positives = 69 E0 + 15 long SIRVs;  TP = detected;  FN = not detected
+##        FP = novel SIRV models at that stage (+ decoy reads when annotated)
+##   5. length bias: E0 + long SIRVs are equimolar -> log2 ratio vs length
+##   6. ERCC: dose response (log2 CPM vs log2 input among detected ERCCs),
+##      70% detection limit (logistic), detection above fixed concentrations
 ##
-## Normalisation: CPM within each family (counts: a full-length read = one
-## molecule). SIRV and ERCC input did not change between DRS libraries.
-## Inputs : <run>/transcriptome/oarfish/ (catchOarfish), curated GTF, Bambu's raw GTF,
+## Inputs : <run>/transcriptome/oarfish/ (catchOarfish) or the curated Bambu
+##          table, <run>/transcriptome/{bambu,curated/annotation}/ GTFs,
 ##          data/SIRV_Set4_Norm_sequence-design-overview_20210507a.xlsx
-## Outputs: spike-ins/results/sirv_ercc/
-##   sirv_ercc_summary.csv, length_bias.csv, ercc_per_transcript.csv,
-##   novel_models_on_spikeins.csv, <platform>/sirv_e0_per_isoform.csv
+## Outputs: spike-ins/results/sirv_ercc/ (oarfish; read by 07) or
+##          spike-ins/results/sirv_ercc_bambu/ (Bambu; read by 08):
+##   sirv_ercc_summary.csv, length_bias.csv, length_class_summary.csv,
+##   detection_grid.csv, ercc_per_transcript.csv, novel_models_on_spikeins.csv,
+##   <platform>/sirv_e0_per_isoform.csv (E0 only), <platform>/sirv_per_isoform.csv (all 84,
+##   with the RTA overdispersion)
 ## ===========================================================================
 
 suppressPackageStartupMessages({
   library(tidyverse)
 })
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/longbench/00_paths.R")   # platforms, run_dir
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/longbench/00_paths.R")   # platforms, run_dir
 source(file.path(shared_helper_dir, "oarfish_counts.R"))                    # read_oarfish()
+source(file.path(shared_helper_dir, "spikein_counts.R"))                    # read_counts_q()
 plat_labels <- c(ont_cdna = "ONT cDNA", ont_drs = "ONT DRS", pb = "PacBio")
-outroot <- sirv_dir
+
+## "oarfish" (default, primary) or "bambu": Rscript 02_sirv_ercc.R bambu,
+## or set it here when sourcing in RStudio
+quantifier <- quantifier_arg()
+outroot <- quant_dir(sirv_dir, quantifier)
 dir.create(outroot, recursive = TRUE, showWarnings = FALSE)
+message("Quantifier: ", quantifier, " -> ", outroot)
 
-lex_file  <- file.path(data_dir, "SIRV_Set4_Norm_sequence-design-overview_20210507a.xlsx")
+lex_file  <- sirv_design            # references/SIRV_Set4_Norm_sequence-design-overview_20210507a.xlsx
 
-## Novel models are counted at two stages (same layout as the dong check,
-## sequin_mirror_isoforms.md):
-##   raw        <run>/transcriptome/bambu/bambu_novel_transcripts.gtf          (Bambu discovery)
+## Novel models are counted at two stages (independent of the quantifier):
+##   raw        <run>/transcriptome/bambu/bambu_novel_transcripts.gtf  (Bambu discovery)
 ##   validated  <run>/transcriptome/curated/annotation/BambuOutput_annotations_validated.gtf
 ##              (what pulposeq delivers; novel = transcript_id BambuTx*)
 gtf_stage <- list(
@@ -78,8 +103,17 @@ gtf_stage <- list(
   validated = setNames(vapply(platforms, run_file, "", key = "validated_gtf"), platforms))
 
 sirv_annotation <- "correct (c): 69 E0 isoforms"   # recorded in the summary table
-sirv_min_reads  <- 1          # a SIRV isoform counts as detected with >= this many reads
+
+## ---- detection rules (decide once, report the grid) ----------------------
+det_min_reads   <- 3          # SIRV detected: >= this many reads ...
+det_min_libs    <- 2          # ... in >= this many of the libraries
+quant_abs_log2  <- 3          # "quantified": |median log2(obs/exp)| <= 3 (within 8-fold, both directions)
+ercc_min_reads  <- 1          # ERCC detected: >= this many reads ...
+ercc_min_libs   <- 2          # ... in >= this many libraries (single-library hits can be cross-talk)
+sirv_min_reads  <- 1          # only for the (not applicable) decoy count
 ercc_conc_cuts  <- c(1, 11.71875)                  # amol/ul; detection reported above these
+sirv_rule_txt <- sprintf(">=%d reads in >=%d libraries", det_min_reads, det_min_libs)
+ercc_rule_txt <- sprintf(">=%d reads in >=%d libraries", ercc_min_reads, ercc_min_libs)
 
 ## ----------------------------------------------------- expected amounts ---
 ## readxl drops empty leading columns, so columns are located relative to
@@ -118,13 +152,13 @@ stopifnot("Lexogen sheet not read as expected" =
 positives <- c(e0$id, long$id)                                      # 84 SIRV molecules in the mix
 
 ## ------------------------------------------------------------- helpers ----
-## curated oarfish counts (undivided) of the SIRV / ERCC rows; the RTA
-## overdispersion is kept as an attribute
+## undivided estimated reads of the SIRV / ERCC rows (curated set); the RTA
+## overdispersion (oarfish; NA for Bambu) is kept as an attribute
 read_tx <- function(plat) {
-  x <- read_oarfish(run_dir[[plat]], "transcript", cache_dir = oarfish_cache)
-  s <- grepl("^(SIRV|ERCC)", rownames(x$counts))
-  m <- x$counts[s, , drop = FALSE]
-  attr(m, "overdispersion") <- x$overdispersion[s]
+  x <- read_counts_q(run_dir[[plat]], "transcript", quantifier, rows = "^(SIRV|ERCC)",
+                     cache_dir = oarfish_cache)
+  m <- x$reads
+  attr(m, "overdispersion") <- x$od
   m
 }
 
@@ -147,7 +181,7 @@ read_novel_spikein <- function(f, plat, stage) {
     filter(grepl("^BambuTx", transcript_id)) %>%
     group_by(transcript_id, gene_id, seqname, strand) %>%
     ## exonic_len first: once `start` / `end` are summarised they would mask
-    ## the per-exon columns (same pitfall as the old sequin scoring bug)
+    ## the per-exon columns
     summarise(exonic_len = sum(end - start + 1L), exons = n(),
               start = min(start), end = max(end), .groups = "drop") %>%
     transmute(protocol = plat_labels[[plat]], stage,
@@ -171,39 +205,64 @@ take <- function(m, ids) {
 }
 cpm_mat <- function(m) sweep(m, 2, pmax(colSums(m), 1), "/") * 1e6   # not `cpm`: would mask edgeR::cpm
 
+## detected = >= min_reads in >= min_libs libraries (named logical, one per row);
+## counts rounded per library first (estimated reads are fractional)
+detect <- function(x, min_reads, min_libs) rowSums(round(x) >= min_reads) >= min_libs
+
+## sensitivity of "detected" to the rule: reads x libraries grid + LongBench-like rule
+## (edgeR filterByExpr, min.count = 5, each library its own group, min.total.count = 15;
+##  raw counts instead of the CPM cut-off, so an approximation)
+detect_grid <- function(x, spikein) {
+  g <- expand_grid(min_reads = c(1, 2, 3, 5), min_libs = c(1, 2, 4)) %>%
+    mutate(rule = sprintf(">=%d reads in >=%d libraries", min_reads, min_libs),
+           detected = map2_int(min_reads, min_libs, ~ sum(detect(x, .x, .y))))
+  bind_rows(g, tibble(rule = "LongBench-like: >=5 reads in >=1 library, >=15 in total",
+                      detected = sum(rowSums(round(x) >= 5) >= 1 & rowSums(round(x)) >= 15))) %>%
+    mutate(spikein = spikein, total = nrow(x))
+}
+
 ## ----------------------------------------------------------------- run ----
-len_all <- list(); ercc_all <- list(); summ <- list(); novel_all <- list()
+len_all <- list(); ercc_all <- list(); summ <- list(); novel_all <- list(); grid_all <- list()
 
 for (plat in platforms) {
   prot   <- plat_labels[[plat]]
   outdir <- file.path(outroot, plat)
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-  m <- read_tx(plat)
+  m  <- read_tx(plat)
+  od <- attr(m, "overdispersion")                       # NA: Bambu, or not in the curated set
 
-  ## ---- 1. SIRV E0 isoform accuracy ----
-  e0_m <- take(m, e0$id)
-  e0_l <- as_tibble(log2((cpm_mat(e0_m) + 1) / (1e6 / nrow(e0))), rownames = "id") %>%
+  ## ---- 1. SIRV accuracy: all 84 SIRVs share ONE denominator (expected 1/84) ----
+  sirv_m   <- take(m, positives)
+  sirv_cpm <- cpm_mat(sirv_m)                          # columns sum to 1e6 over the 84 SIRVs
+  sirv_l <- as_tibble(log2((sirv_cpm + 1) / (1e6 / nrow(sirv_m))), rownames = "id") %>%
     pivot_longer(-id, names_to = "sample", values_to = "log2_ratio") %>%
-    mutate(protocol = prot, gene = sub("^(SIRV\\d)\\d+$", "\\1", id))
-  e0_iso <- e0_l %>%
-    group_by(protocol, gene, id) %>%
+    mutate(protocol = prot,
+           set  = if_else(id %in% e0$id, "SIRV E0", "long SIRV"),
+           gene = if_else(set == "SIRV E0", sub("^(SIRV\\d)\\d+$", "\\1", id), NA_character_))
+  sirv_iso <- sirv_l %>%
+    group_by(protocol, set, gene, id) %>%
     summarise(median = median(log2_ratio), sd = sd(log2_ratio), .groups = "drop") %>%
-    mutate(overdispersion = unname(attr(m, "overdispersion")[id]))   # NA: not in the curated set
-  write_csv(e0_iso, file.path(outdir, "sirv_e0_per_isoform.csv"))
+    mutate(overdispersion = unname(od[id]))
+  e0_iso <- sirv_iso %>% filter(set == "SIRV E0") %>% select(protocol, gene, id, median, sd, overdispersion)
+  write_csv(e0_iso,   file.path(outdir, "sirv_e0_per_isoform.csv"))   # E0 only (Fig. 1b label)
+  write_csv(sirv_iso, file.path(outdir, "sirv_per_isoform.csv"))      # all 84
+
+  ## detection (tier 1) and quantification (tier 2)
+  det_sirv <- detect(sirv_m, det_min_reads, det_min_libs)
+  med_sirv <- setNames(sirv_iso$median, sirv_iso$id)
+  quant_ok <- det_sirv & abs(med_sirv[names(det_sirv)]) <= quant_abs_log2
 
   ## ---- 2. reads on over-annotation-only SIRV isoforms (if annotated) ----
-  ## Bambu reports every annotated transcript, even with 0 reads, so an
-  ## over-annotation-only ID missing from the table means it was not in the GTF.
-  ## (Assumes the curated table keeps zero-count annotated transcripts; with
-  ## the correct annotation used here this is moot - SIRV104 etc. are not in
-  ## the Lexogen GTF at all.)
-  over_in_annot <- intersect(over_only, rownames(m))
+  ## An over-annotation-only ID missing from the curated table was not in the
+  ## GTF (or had too few reads to be curated); with the correct annotation used
+  ## here this is moot - SIRV104 etc. are not in the Lexogen GTF at all.
+  over_in_annot  <- intersect(over_only, rownames(m))
   decoy_testable <- length(over_in_annot) > 0
   if (!decoy_testable)
     message(sprintf("[%s] none of the %d over-annotation-only SIRV isoforms is in the annotation: decoy test not applicable",
                     prot, length(over_only)))
   over_reads    <- if (decoy_testable) sum(m[over_in_annot, ]) else NA_real_
-  over_with_rds <- if (decoy_testable) sum(rowSums(m[over_in_annot, , drop = FALSE]) >= sirv_min_reads) else NA_integer_
+  over_with_rds <- if (decoy_testable) sum(rowSums(round(m[over_in_annot, , drop = FALSE])) >= sirv_min_reads) else NA_integer_
   sirv_tot      <- sum(take(m, c(positives, over_in_annot)))
 
   ## ---- 3. novel models on spike-in sequences: raw Bambu vs validated ----
@@ -221,9 +280,8 @@ for (plat in platforms) {
 
   ## ---- 4. SIRV identification: precision / recall / F1, per stage ----
   ## TP / FN from the validated counts (annotated SIRVs are not curated away);
-  ## FP = novel SIRV models at that stage (+ reads on over-annotation-only
-  ## isoforms when those are annotated)
-  pos_det <- rowSums(take(m, positives)) >= sirv_min_reads
+  ## FP = novel SIRV models at that stage (+ decoy isoforms with reads, if annotated)
+  pos_det  <- det_sirv[positives]
   tp <- sum(pos_det)
   fn <- sum(!pos_det)
   decoy_fp <- if (decoy_testable) over_with_rds else 0L
@@ -232,51 +290,88 @@ for (plat in platforms) {
   s_raw    <- prf(tp, fn, fp_raw)
   s_val    <- prf(tp, fn, fp_val)
   if (fn > 0)
-    message(sprintf("[%s] SIRV isoforms in the mix not detected: %s", prot,
+    message(sprintf("[%s] SIRV isoforms in the mix not detected (%s): %s", prot, sirv_rule_txt,
                     paste(positives[!pos_det], collapse = ", ")))
 
+  ## detection-rule sensitivity (SIRV: with P/R/F1 after validation; ERCC: counts only)
+  g_sirv <- detect_grid(sirv_m, "SIRV (E0 + long)")
+  s_grid <- t(vapply(g_sirv$detected, function(d) prf(d, nrow(sirv_m) - d, fp_val), numeric(3)))
+  g_sirv <- bind_cols(g_sirv, as_tibble(s_grid))
+  g_ercc <- detect_grid(take(m, ercc$id), "ERCC")
+  grid_all[[plat]] <- bind_rows(g_sirv, g_ercc) %>% mutate(protocol = prot, .before = 1)
+
   ## ---- 5. length bias: E0 + long SIRVs, all equimolar ----
+  ## same per-isoform value as sirv_*_per_isoform.csv and the summary: median
+  ## across libraries of the per-library log2(obs/exp)
   eq      <- bind_rows(mutate(e0, set = "SIRV E0"), mutate(long, set = "long SIRV"))
-  eq_m    <- take(m, eq$id)
-  eq_rel  <- log2((rowMeans(cpm_mat(eq_m)) + 1) / (1e6 / nrow(eq)))
+  eq_rel  <- med_sirv
   len_t   <- tibble(protocol = prot, id = eq$id, set = eq$set, len = eq$len,
-                    log2_ratio = unname(eq_rel[eq$id]))
+                    log2_ratio = unname(eq_rel[eq$id]), overdispersion = unname(od[eq$id]))
   len_all[[plat]] <- len_t
-  len_fit <- lm(log2_ratio ~ log2(len), data = len_t)
+  len_fit <- lm(log2_ratio ~ log2(len), data = len_t)   # descriptive only: PacBio is a step, not a line
+  e0_ge1kb <- len_t$set == "SIRV E0" & len_t$len >= 1000
 
   ## ---- 6. ERCC ----
-  er_m   <- take(m, ercc$id)
-  er_cpm <- cpm_mat(er_m)
-  det    <- rowMeans(er_m > 0)                              # fraction of samples detecting
-  er_t   <- tibble(protocol = prot, id = ercc$id, conc = ercc$conc,
-                   mean_count = rowMeans(er_m), detected = det,
-                   log2_cpm = log2(rowMeans(er_cpm)))
+  er_m    <- take(m, ercc$id)
+  er_cpm  <- cpm_mat(er_m)
+  det_frac <- rowMeans(round(er_m) >= 1)                  # fraction of libraries with >= 1 read (logistic fit)
+  ercc_det     <- detect(er_m, ercc_min_reads, ercc_min_libs)   # rule used for "detected / in mix"
+  ercc_det_any <- rowSums(round(er_m) >= 1) >= 1                 # most lenient, for comparison
+  er_t <- tibble(protocol = prot, id = ercc$id, conc = ercc$conc, len = ercc$len,
+                 mean_count = rowMeans(er_m), detected = det_frac,
+                 detected_rule = unname(ercc_det),
+                 log2_cpm = log2(rowMeans(er_cpm)))
   ercc_all[[plat]] <- er_t
 
-  ok  <- is.finite(er_t$log2_cpm)
+  ok   <- is.finite(er_t$log2_cpm) & er_t$detected_rule   # fit only ERCCs passing the detection rule
   efit <- if (sum(ok) >= 3) lm(log2_cpm ~ log2(conc), data = er_t[ok, ]) else NULL
-  lfit <- suppressWarnings(glm(cbind(round(det * ncol(m)), ncol(m) - round(det * ncol(m))) ~
-                                 log2(conc), family = binomial, data = er_t))
-  lod  <- 2^((qlogis(0.7) - coef(lfit)[1]) / coef(lfit)[2])  # conc at 70% detection
+  hi   <- ok & er_t$conc >= 11.71875                      # well-detected range: slope without the detection floor
+  hfit <- if (sum(hi) >= 3) lm(log2_cpm ~ log2(conc), data = er_t[hi, ]) else NULL
+  ## Pearson r over ALL ERCCs and libraries, undetected ones at the pseudocount floor (LongBench style)
+  r_all <- suppressWarnings(cor(as.vector(log2(er_cpm + 1)),
+                                rep(log2(ercc$conc), times = ncol(er_cpm))))
+  ## do residuals follow ERCC length? (PacBio: short ERCCs depleted, like the SIRVs)
+  res_rho <- if (is.null(efit)) NA_real_ else
+    suppressWarnings(cor(resid(efit), log2(er_t$len[ok]), method = "spearman"))
 
-  ## ERCC detection above fixed concentrations (any sample)
-  ercc_above <- map_dfc(ercc_conc_cuts, function(cc) {
+  k    <- round(det_frac * ncol(m))
+  lfit <- suppressWarnings(glm(cbind(k, ncol(m) - k) ~ log2(conc), family = binomial, data = er_t))
+  l_b0 <- unname(coef(lfit)[1]); l_b1 <- unname(coef(lfit)[2])
+  lod  <- if (is.finite(l_b1) && l_b1 > 0) 2^((qlogis(0.7) - l_b0) / l_b1) else NA_real_  # conc at 70% detection
+
+  ## ERCC detection above fixed concentrations (same rule as `ercc_detected`)
+  above <- list()
+  for (cc in ercc_conc_cuts) {
     s <- er_t$conc >= cc
-    tibble(!!sprintf("ercc_detected_ge_%s", format(cc, trim = TRUE)) := sum(det[s] > 0),
-           !!sprintf("ercc_total_ge_%s",    format(cc, trim = TRUE)) := sum(s))
-  })
+    above[[sprintf("ercc_detected_ge_%s", format(cc, trim = TRUE))]] <- sum(ercc_det[s])
+    above[[sprintf("ercc_total_ge_%s",    format(cc, trim = TRUE))]] <- sum(s)
+  }
+  ercc_above <- as_tibble(above)
+
+  ## assignment vs capture: does the abundance error follow the RTA
+  ## overdispersion? (detected SIRVs; NA for Bambu, which has no bootstraps)
+  od_ok  <- det_sirv[sirv_iso$id] & is.finite(sirv_iso$overdispersion)
+  od_rho <- if (sum(od_ok) >= 5)
+    suppressWarnings(cor(abs(sirv_iso$median[od_ok]), log2(sirv_iso$overdispersion[od_ok]),
+                         method = "spearman")) else NA_real_
 
   summ[[plat]] <- bind_cols(tibble(
+    quantifier = quantifier,
     protocol = prot,
     sirv_annotation      = sirv_annotation,
-    ## SIRV E0 quantification
-    e0_detected          = sum(rowSums(e0_m) >= sirv_min_reads),            # same rule as sirv_tp
+    sirv_detection_rule  = sirv_rule_txt,
+    ## SIRV E0 / long SIRV: detection and accuracy (one 1/84 denominator)
+    e0_detected          = sum(det_sirv[e0$id]),
+    e0_quantified        = sum(quant_ok[e0$id]),
     e0_median_abs_log2   = median(abs(e0_iso$median)),
-    e0_median_overdispersion = median(e0_iso$overdispersion, na.rm = TRUE),   # RTA, bootstraps
     e0_within_2fold      = mean(abs(e0_iso$median) <= 1),
+    e0_within_8fold      = mean(abs(e0_iso$median) <= 3),
     e0_lost              = sum(e0_iso$median < -3),
     e0_unstable          = sum(e0_iso$sd > 1),
-    long_detected        = sum(rowSums(take(m, long$id)) >= sirv_min_reads), # e0 + long = sirv_tp
+    e0_median_overdispersion = median(e0_iso$overdispersion, na.rm = TRUE),   # RTA, bootstraps
+    sirv_error_od_rho    = od_rho,          # Spearman |log2 obs/exp| vs log2 overdispersion
+    long_detected        = sum(det_sirv[long$id]),
+    long_quantified      = sum(quant_ok[long$id]),
     ## decoy test (NA when the over-annotation isoforms are not in the GTF)
     decoy_test           = if (decoy_testable) "applicable" else "not applicable (not in annotation)",
     over_only_in_annotation   = length(over_in_annot),
@@ -287,7 +382,7 @@ for (plat in platforms) {
     novel_sirv_validated = n_nov("SIRV", "validated"),
     novel_ercc_raw       = n_nov("ERCC", "raw"),
     novel_ercc_validated = n_nov("ERCC", "validated"),
-    ## SIRV identification (positives = 69 E0 + 15 long SIRVs)
+    ## SIRV identification = PRESENCE only (positives = 69 E0 + 15 long SIRVs)
     sirv_tp              = tp,
     sirv_fn              = fn,
     sirv_fp_raw          = fp_raw,
@@ -297,16 +392,26 @@ for (plat in platforms) {
     sirv_f1_raw          = unname(s_raw["f1"]),
     sirv_precision       = unname(s_val["precision"]),     # validated = what pulposeq delivers
     sirv_f1              = unname(s_val["f1"]),
-    ## length bias
-    length_slope         = unname(coef(len_fit)[2]),   # log2 ratio per doubling of length
+    ## length bias (kept for compatibility; prefer length_class_summary.csv)
+    length_slope         = unname(coef(len_fit)[2]),   # log2 ratio per doubling of length (linear: descriptive)
     long_vs_e0_log2      = mean(len_t$log2_ratio[len_t$set == "long SIRV"]) -
                            mean(len_t$log2_ratio[len_t$set == "SIRV E0"]),
+    long_vs_e0_ge1kb_log2 = mean(len_t$log2_ratio[len_t$set == "long SIRV"]) -
+                           mean(len_t$log2_ratio[e0_ge1kb]),   # fair contrast: E0 >= 1 kb only
     ## ERCC
-    ercc_detected        = sum(det > 0),
+    ercc_detection_rule  = ercc_rule_txt,
+    ercc_detected        = sum(ercc_det),
+    ercc_detected_any    = sum(ercc_det_any),            # >= 1 read in any library
     ercc_total           = nrow(ercc),
-    ercc_slope           = if (is.null(efit)) NA_real_ else unname(coef(efit)[2]),
+    ercc_reads_per_library = sum(rowMeans(er_m)),        # depth confounds detection limits
+    ercc_slope           = if (is.null(efit)) NA_real_ else unname(coef(efit)[2]),   # detected ERCCs only
     ercc_r2              = if (is.null(efit)) NA_real_ else summary(efit)$r.squared,
-    ercc_lod70_amol_ul   = unname(lod)), ercc_above)
+    ercc_slope_hi        = if (is.null(hfit)) NA_real_ else unname(coef(hfit)[2]),   # >= 11.7 amol/ul
+    ercc_r2_hi           = if (is.null(hfit)) NA_real_ else summary(hfit)$r.squared,
+    ercc_pearson_all     = r_all,                        # all ERCCs, undetected at the floor
+    ercc_resid_length_rho = res_rho,                     # Spearman: residual vs log2 length
+    ercc_lod70_amol_ul   = lod,                          # "70% detection limit" (Anaquin-style logistic, not Anaquin's LOD)
+    ercc_lod70_logistic_slope = l_b1), ercc_above)
 }
 
 ## ------------------------------------------------------------- outputs ----
@@ -314,10 +419,25 @@ summ      <- bind_rows(summ)
 len_all   <- bind_rows(len_all)
 ercc_all  <- bind_rows(ercc_all)
 novel_all <- bind_rows(novel_all)
+grid_all  <- bind_rows(grid_all)
+
+## length classes: <1 kb E0, 1-2.5 kb E0, long SIRVs (4-12 kb). Values are the plotted
+## per-isoform log2 ratios (median across libraries, 1/84 denominator)
+len_class <- len_all %>%
+  mutate(class = case_when(set == "long SIRV" ~ "long SIRV (4-12 kb)",
+                           len < 1000         ~ "E0 < 1 kb",
+                           TRUE               ~ "E0 1-2.5 kb")) %>%
+  group_by(protocol, class) %>%
+  summarise(n = n(), median_log2 = median(log2_ratio),
+            within_2x = mean(abs(log2_ratio) <= 1), .groups = "drop")
+
 write_csv(summ,      file.path(outroot, "sirv_ercc_summary.csv"))
 write_csv(len_all,   file.path(outroot, "length_bias.csv"))
+write_csv(len_class, file.path(outroot, "length_class_summary.csv"))
+write_csv(grid_all,  file.path(outroot, "detection_grid.csv"))
 write_csv(ercc_all,  file.path(outroot, "ercc_per_transcript.csv"))
 write_csv(novel_all, file.path(outroot, "novel_models_on_spikeins.csv"))
 print(summ, width = Inf)
+print(len_class)
 
 message("Done: ", outroot)

@@ -83,7 +83,7 @@ read_oarfish <- function(run_dir, level = c("transcript", "gene"), curated = TRU
   if (!is.null(cache_dir)) {
     dir.create(cache_dir, recursive = TRUE, showWarnings = FALSE)
     ## short name (Windows path-length limit): the run's last two folders,
-    ## e.g. ont_cdna_results_oarfish
+    ## e.g. pulposeq_oarfish_ont_cdna
     run_tag <- gsub("[^A-Za-z0-9]+", "_",
                     paste(basename(dirname(run_dir)), basename(run_dir), sep = "_"))
     cache <- file.path(cache_dir, sprintf("oarfish_%s_%s_%s.rds", level,

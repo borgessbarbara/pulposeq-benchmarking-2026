@@ -1,23 +1,30 @@
 ## ===========================================================================
-## 06_fig2_panels.R - Fig. 2 a-f: the Dong panels drawn with ggplot2
+## 06_fig2_panels.R - Fig. 2 a-g: the Dong panels drawn with ggplot2
 ## H1975 (TKI-resistant) vs HCC827 (TKI-sensitive), ONT PCR-cDNA, Bambu full
 ## counts, 3 independent cultures per line (Dong et al. 2023 Nat Methods).
 ##
 ## Panel  object  content
 ##   a     pA      read-level support across biotypes
 ##   b     pB      novel transcripts by biotype and GffCompare class code
-##   c     pC      sequin ground truth, isoform level: observed vs expected log2FC,
-##                 precision / recall / F1 top-left, R2 / slope bottom-right
-##   d     pD      sample-sample Spearman correlation, isoform level (edgeR logCPM)
-##   e     pE      volcano, gene level, Up / Down totals; marker genes labelled
+##   c     pID     sequin identification, vertical bars with values on top: recall
+##                 (detected / expected), precision, F1 (false positive = novel model
+##                 on a sequin; Bambu value before validation in brackets); as Fig. 1b
+##   d     pC      sequin ground truth, isoform level: observed vs expected log2FC,
+##                 DE precision / sensitivity / F1 top-left, sequins tested +
+##                 R2 / slope bottom-right
+##   e     pD      sample-sample Spearman correlation, isoform level (edgeR logCPM)
+##   f     pE      volcano, gene level, Up / Down totals; marker genes labelled
 ##                 (only those tested AND DE)
-##   f     pF      DE isoforms of the marker genes (Bambu gene assignment), rows
+##   g     pF      DE isoforms of the marker genes (Bambu gene assignment), rows
 ##                 grouped by gene and ranked by log2FC; z-score of logCPM per
 ##                 isoform; last column = isoform DE call
-##   g, i-k, m     DE isoform profiles, cis-pair heatmap: 04_isoformic.R, section 7e
+##   h, j-l        DE isoform profiles: 04_isoformic.R, section 7e
 ##                 (isoformic/figures/fig2_panels/)
-##   h             EGFR locus: 04_isoformic.R (isoformic/figures/locus_*/EGFR.*)
-##   l             cis-acting pairs circos: 03_cis_circos.R (paper_cis_circos.*)
+##   i             EGFR locus: 04_isoformic.R (isoformic/figures/locus_*/EGFR.*)
+##   m             cis-acting pairs circos: 03_cis_circos.R (paper_cis_circos.*)
+##   n             cis-pair heatmap: 03_cis_circos.R (paper_cis_heatmap.*)
+## (v2: new panel c; the old c-m are now d-n. Sequin identification numbers
+## live only in panel c.)
 ##   ED Fig. 1     every event + cis-pair profile: 04_isoformic.R
 ##
 ## Layout = the final Fig. 2 (manuscript/Figure2.pdf, an A3 page, 297 x 420 mm):
@@ -29,8 +36,9 @@
 ##
 ## Needs (run first): 01_de_edger.R, 02_sequin_edger.R, 05_read_support.R
 ## Outputs
-##   figures/fig2_panels/fig2{a..f}_*.{pdf,svg,png}   (svg = editable text)
+##   figures/fig2_panels/fig2{a..g}_*.{pdf,svg,png}   (svg = editable text)
 ##   results/figure_tables/supp_novel_biotype_classcode_dong.csv   (Fig. 2b numbers)
+##   results/figure_tables/sequin_identification_dong.csv           (Fig. 2c numbers)
 ## Needs: tidyverse, ggrepel, RColorBrewer, svglite, showtext, systemfonts
 ## ===========================================================================
 
@@ -39,7 +47,7 @@ suppressPackageStartupMessages({
   library(ggrepel)
 })
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/dong/00_paths.R")
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/dong/00_paths.R")
 source(file.path(helper_dir, "plot_theme.R"))       # font_family, base_theme, group_cols, npg_cols
 source(file.path(helper_dir, "figure_helpers.R"))   # save_panel, keep_level, read_support_plot
 dir.create(tab_dir, showWarnings = FALSE, recursive = TRUE)
@@ -65,13 +73,13 @@ markers  <- c(
   "TPT1",
   # cis-pair partner (with BambuTx946_k)
   "LSP1P5"
-)                                 # panels e (labels) and f (heatmap)
-hm_only_de <- TRUE                # panel f: TRUE = DE isoforms only; FALSE = every tested isoform
-max_iso_per_gene <- Inf           # panel f: top isoforms per gene by padj (Inf = all)
-z_lim      <- 2                   # panel f: colour scale limits (row z-score)
-y_cap      <- 9.5                 # panel c: |observed log2FC| drawn at most this far
-cor_level  <- "transcript"        # panel d: "gene" or "transcript" (isoform)
-## panel f: sample columns, left to right, as in the final figure (H1975 first;
+)                                 # panels f (labels) and g (heatmap)
+hm_only_de <- TRUE                # panel g: TRUE = DE isoforms only; FALSE = every tested isoform
+max_iso_per_gene <- Inf           # panel g: top isoforms per gene by padj (Inf = all)
+z_lim      <- 2                   # panel g: colour scale limits (row z-score)
+y_cap      <- 9.5                 # panel d: |observed log2FC| drawn at most this far
+cor_level  <- "transcript"        # panel e: "gene" or "transcript" (isoform)
+## panel g: sample columns, left to right, as in the final figure (H1975 first;
 ## the DE call is the last column); other names = HCC827 then H1975 as in the data
 hm_samples <- c("H1975_2", "H1975_1", "H1975_3", "HCC827_2", "HCC827_1", "HCC827_3")
 
@@ -123,7 +131,7 @@ lab_repel <- function(data, mapping, ...) {
 }
 
 ## ================================================================ a =====
-## read-level support (05_read_support.R; same design as Fig. 1e)
+## read-level support (05_read_support.R; same design as Fig. 1f)
 rs <- read_csv(file.path(rs_dir, "read_support_all_runs_long.csv"), show_col_types = FALSE)
 pA <- read_support_plot(rs, label_fs = 6, n_sep = "\n") +
   guides(fill = guide_legend(ncol = 1)) +
@@ -179,7 +187,72 @@ pB <- ggplot(dplyr::count(dnov, biotype, cls), aes(biotype, n, fill = cls)) +
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
   border(0.5) + leg_right(1)
 
+## ---- spike-in identification panel (Fig. 1b; the same code draws Fig. 2c) ----
+## One row per spike-in set x protocol: expected (isoforms in the mix), detected
+## (TP), fp_raw / fp_val = novel models on that set's sequences, Bambu output /
+## after pulposeq validation (every spike-in is annotated, so any novel model on
+## one is a false positive). Recall = TP / expected; precision = TP / (TP + FP).
+## (v3: vertical bars with the values on top, instead of lollipops)
+id_metrics <- function(id) {
+  id %>% mutate(recall        = detected / expected,
+                precision     = detected / (detected + fp_val),
+                f1            = 2 * precision * recall / (precision + recall),
+                precision_raw = detected / (detected + fp_raw),
+                f1_raw        = 2 * precision_raw * recall / (precision_raw + recall))
+}
+## Vertical bars, one facet per metric (recall, precision, F1); x = spike-in
+## set, one bar per protocol, the value printed on top of each bar (recall as
+## detected / expected). Bars and values are after pulposeq validation; where
+## the Bambu output (before validation) differs, its value follows in brackets.
+id_bars <- function(id, set_levels, prot_levels, cols, label_pt = 6, x_angle = 35) {
+  m_lev <- c("Recall", "Precision", "F1")
+  m_lab <- c(Recall = "Recall (detected / expected)", Precision = "Precision", F1 = "F1")
+  d <- id_metrics(id) %>%
+    mutate(set = factor(set, levels = set_levels), protocol = factor(protocol, levels = prot_levels))
+  with_raw <- function(v, raw) ifelse(abs(raw - v) >= 0.005, sprintf("%.2f (%.2f)", v, raw), sprintf("%.2f", v))
+  long <- bind_rows(
+    d %>% transmute(set, protocol, metric = "Recall", value = recall,
+                    label = sprintf("%d/%d", as.integer(detected), as.integer(expected))),
+    d %>% transmute(set, protocol, metric = "Precision", value = precision,
+                    label = with_raw(precision, precision_raw)),
+    d %>% transmute(set, protocol, metric = "F1", value = f1, label = with_raw(f1, f1_raw))) %>%
+    mutate(metric = factor(metric, levels = m_lev))
+  dodge <- position_dodge(width = 0.85)
+  ggplot(long, aes(set, value, fill = protocol)) +
+    geom_col(position = dodge, width = 0.8) +
+    geom_text(aes(label = label, group = protocol), position = dodge, angle = 90, hjust = -0.12,
+              vjust = 0.5, size = label_pt / .pt, family = font_family, colour = "grey15") +
+    facet_grid(. ~ metric, labeller = labeller(metric = m_lab)) +
+    ## headroom above 1 for the labels; the axis stops at 1
+    scale_y_continuous(limits = c(0, 1.5), breaks = seq(0, 1, 0.25),
+                       labels = c("0", "0.25", "0.5", "0.75", "1"), expand = c(0, 0)) +
+    scale_fill_manual(values = cols, name = NULL) +
+    labs(x = NULL, y = NULL) +
+    theme(panel.grid = element_blank(),
+          axis.text.x = if (x_angle == 0) element_text() else element_text(angle = x_angle, hjust = 1, vjust = 1))
+}
+
 ## ================================================================ c =====
+## sequin identification (02_sequin_edger.R, sequin_identification.csv): of the
+## 164 sequin isoforms in the mix, detected = >= 3 reads in >= 2 libraries;
+## false positive = a novel model on a sequin (Bambu output vs after pulposeq
+## validation). Same panel design as Fig. 1b.
+sq_id <- read_csv(file.path(seq_dir, "sequin_identification.csv"), show_col_types = FALSE)
+if ("count_mode" %in% names(sq_id)) sq_id <- filter(sq_id, count_mode == "divided")
+idf <- tibble(set = "Sequins", protocol = "ONT cDNA",
+              detected = sq_id$detected[1], expected = sq_id$annotated[1],
+              fp_raw = sq_id$novel_raw[1], fp_val = sq_id$novel_validated[1])
+write_csv(id_metrics(idf), file.path(tab_dir, "sequin_identification_dong.csv"))
+pID <- id_bars(idf, "Sequins", "ONT cDNA", c("ONT cDNA" = "grey30"), label_pt = 7, x_angle = 0) +
+  guides(fill = "none") +                          # one protocol: no colour key
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  labs(title = "Sequin identification",
+       subtitle = paste0("Detected: >= 3 reads in >= 2 libraries\n",
+                         "False positive: a novel model on a sequin\n",
+                         "Precision, F1: after validation (before, if different)")) +
+  border(0.5)
+
+## ================================================================ d =====
 ## sequin DE ground truth, isoform level (02_sequin_edger.R: same test as the DE)
 out_lev  <- c("true positive", "true negative", "false positive", "false negative", "wrong sign")
 out_cols <- c("true positive" = "grey15", "true negative" = "grey75", "false positive" = "#D55E00",
@@ -193,11 +266,16 @@ sq <- read_csv(file.path(seq_dir, "sequin_de_results.csv"), show_col_types = FAL
   mutate(outcome = factor(outcome, levels = out_lev),
          capped  = abs(obs_lfc) > y_cap,
          y       = pmax(pmin(obs_lfc, y_cap), -y_cap))
-## precision / F1 from summarise_calls() (02_sequin_edger.R), recall = sensitivity
+## top-left: DE calls among the TESTED sequins (the points); bottom-right: how
+## many sequins could be tested (>= 10 reads in >= 3 libraries), then R2 / slope;
+## that corner is empty by design (expected down, observed strongly up).
+## Sequins detected / in the mix: panel c.
 sq_s <- read_csv(file.path(seq_dir, "summary.csv"), show_col_types = FALSE) %>%
   filter(level == "transcript", count_mode == "divided") %>%
-  mutate(lab_top = sprintf("precision = %.2f\nrecall = %.2f\nF1 = %.2f", precision, sensitivity, f1),
-         lab_bot = sprintf("R\u00b2 = %.2f\nslope = %.2f", r2, slope))
+  mutate(lab_top = sprintf("precision = %.2f\nsensitivity = %.2f\nF1 = %.2f",
+                           precision, sensitivity, f1),
+         lab_bot = sprintf("%d tested\nR\u00b2 = %.2f\nslope = %.2f",
+                           as.integer(tested), r2, slope))
 
 pC <- ggplot(sq, aes(exp_lfc, y)) +
   annotate("rect", xmin = -lfc, xmax = lfc, ymin = -Inf, ymax = Inf, fill = "grey93") +
@@ -211,15 +289,19 @@ pC <- ggplot(sq, aes(exp_lfc, y)) +
   scale_colour_manual(values = out_cols, labels = out_labs, drop = FALSE, name = NULL) +
   scale_shape_manual(values = c(`FALSE` = 16, `TRUE` = 17), breaks = "TRUE",
                      labels = sprintf("|observed log2FC| > %.1f", y_cap), name = NULL) +
-  scale_y_continuous(expand = expansion(mult = c(0.05, 0.25))) +
+  ## bottom room: the tested + R2 / slope block sits below the data
+  scale_y_continuous(expand = expansion(mult = c(0.12, 0.25))) +
   guides(colour = guide_legend(order = 1, ncol = 1, override.aes = list(size = 2)),
          shape  = guide_legend(order = 2, override.aes = list(size = 2, shape = 2))) +
   labs(x = "Expected log2FC\n(Mix A / Mix B)", y = "Observed log2FC (edgeR)",
        title = "Sequin ground truth",
-       subtitle = "Mix A (H1975) vs Mix B (HCC827)\nFDR < 0.05, |log2FC| > 0.5; shaded: not truly DE") +
+       ## glmTreat TESTS against |log2FC| <= 0.5; it is not a fold-change filter
+       ## three lines: the second line no longer runs past the panel edge
+       subtitle = paste0("Mix A (H1975) vs Mix B (HCC827)\nedgeR glmTreat (H0 |log2FC| <= ", lfc,
+                         "), FDR < 0.05\nshaded: not truly DE")) +
   theme(legend.spacing.y = unit(0, "mm")) + leg_right(1)
 
-## ================================================================ d =====
+## ================================================================ e =====
 ## sample-sample Spearman correlation (01_de_edger.R: cor(logCPM, method =
 ## "spearman") over the isoforms it tested), samples ordered by line
 rho_m <- as.matrix(read.csv(file.path(de_dir, cor_level, "sample_spearman.csv"),
@@ -242,10 +324,11 @@ pD <- ggplot(rho_l, aes(s2, s1, fill = rho)) +
         axis.text.y = element_text(size = 10),
         axis.ticks = element_blank(),
         panel.border = element_blank(),
-        legend.key.height = unit(8, "mm")) +                    # colour bar 5 x 8 = 40 mm
+        legend.key.height = unit(6, "mm")) +                    # colour bar 5 x 6 = 30 mm: as tall as
+                                                                # the 6 tiles (8 mm ran past the panel)
   leg_right(1)
 
-## ================================================================ e =====
+## ================================================================ f =====
 ## volcano, gene level; only markers that were tested and are DE are labelled
 res <- read_csv(file.path(de_dir, "all_results.csv"), show_col_types = FALSE)
 
@@ -287,7 +370,7 @@ pE <- ggplot(vol, aes(log2FC, y, colour = call)) +
        subtitle = paste0("FDR ", alpha, ", |log2FC| > ", lfc)) +
   leg_right(0.66)
 
-## ================================================================ f =====
+## ================================================================ g =====
 ## DE isoforms of the marker genes. Gene = Bambu's gene assignment (GENEID of
 ## the transcript count table, i.e. what the DE used), named via the
 ## reference metadata. Rows = isoforms grouped by gene (marker order) and
@@ -312,11 +395,11 @@ iso <- res %>%
       slice_min(., padj, n = max_iso_per_gene, with_ties = FALSE) else . } %>%
   ungroup() %>%
   arrange(gene, dplyr::desc(log2FC_test))
-message(sprintf("panel f: %d isoforms from %d marker genes%s", nrow(iso), n_distinct(iso$gene),
+message(sprintf("panel g: %d isoforms from %d marker genes%s", nrow(iso), n_distinct(iso$gene),
                 if (hm_only_de) " (DE isoforms only)" else ""))
 no_iso <- setdiff(markers, as.character(iso$gene))
 if (length(no_iso))
-  message("marker genes with no ", if (hm_only_de) "DE " else "", "isoform in panel f: ",
+  message("marker genes with no ", if (hm_only_de) "DE " else "", "isoform in panel g: ",
           paste(no_iso, collapse = ", "))
 
 z <- t(scale(t(xt$mat[iso$feature, smp, drop = FALSE])))
@@ -370,13 +453,18 @@ pF <- ggplot(hm, aes(x, feature)) +
 ## ===================================================== single panels =====
 ## one file per panel; size (width, height, mm) = the panel's extent on the
 ## final Fig. 2 page (A3) + the 0.5 mm plot margin on each side
+## v2: new panel c (size chosen for it: place it and adjust); d = the old c,
+## 4.1 mm taller for the third subtitle line; e-g = the old d-f, same sizes.
+## Old files fig2c_sequin_isoform.*, fig2d_sample_correlation.*, ... are not all
+## overwritten (new names): delete the old ones from figures/fig2_panels/.
 panels <- list(
-  fig2a_read_support         = list(p = pA, size = c(129.3,  69.8)),
-  fig2b_novel_biotype        = list(p = pB, size = c( 60.9,  74.2)),
-  fig2c_sequin_isoform       = list(p = pC, size = c( 75.1,  66.9)),
-  fig2d_sample_correlation   = list(p = pD, size = c( 68.6,  55.2)),
-  fig2e_volcano              = list(p = pE, size = c(111.3,  85.2)),
-  fig2f_isoform_heatmap      = list(p = pF, size = c( 80.0, 215.8))
+  fig2a_read_support          = list(p = pA,  size = c(129.3,  69.8)),
+  fig2b_novel_biotype         = list(p = pB,  size = c( 60.9,  74.2)),
+  fig2c_sequin_identification = list(p = pID, size = c( 75.1,  60.0)),
+  fig2d_sequin_isoform        = list(p = pC,  size = c( 75.1,  71.0)),
+  fig2e_sample_correlation    = list(p = pD,  size = c( 68.6,  55.2)),
+  fig2f_volcano               = list(p = pE,  size = c(111.3,  85.2)),
+  fig2g_isoform_heatmap       = list(p = pF,  size = c( 80.0, 215.8))
 )
 for (nm in names(panels)) save_panel(panels[[nm]]$p, nm, panels[[nm]]$size, panel_dir)
 message("Done: ", length(panels), " panels in ", panel_dir)

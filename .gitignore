@@ -1,2 +1,7 @@
 # read_oarfish() cache (regenerated from the oarfish outputs)
 downstream/**/oarfish_cache/
+
+# outputs of the downstream scripts (written inside the clone)
+downstream/**/results/
+downstream/**/figures/
+downstream/logs/

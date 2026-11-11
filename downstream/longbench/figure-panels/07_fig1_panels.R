@@ -1,24 +1,28 @@
 ## ===========================================================================
-## 07_fig1_panels.R - Fig. 1 b-i: the LongBench panels used in the paper
+## 07_fig1_panels.R - Fig. 1 b-j: the LongBench panels used in the paper
 ##
 ## Panel  object  content
 ##   a     -       pulposeq workflow schematic (drawn in the vector editor; not here)
-##   b     pB      length bias, equimolar SIRVs; corner text: E0 detected / 69,
-##                 % of E0 isoforms whose median observed / expected abundance
-##                 is within 2-fold, long SIRVs detected / 15, F1 = SIRV
-##                 identification after pulposeq validation
-##   c     pD      ERCC dose response; detected / in mix, R2, LOD (70 % detection)
-##   d     pC      sequin ground truth, isoform level: observed vs expected
+##   b     pID     spike-in identification: SIRV E0, long SIRV, ERCC, sequins x
+##                 protocol, vertical bars with values on top: recall (detected /
+##                 expected), precision, F1 (false positive = novel model on a
+##                 spike-in; Bambu value before validation in brackets, if different)
+##   c     pB      length bias, equimolar SIRVs; corner text: % of E0 isoforms
+##                 whose median observed / expected abundance is within 2-fold
+##   d     pD      ERCC dose response; R2, LOD (70 % detection)
+##   e     pC      sequin ground truth, isoform level: observed vs expected
 ##                 log2FC per protocol, points coloured by outcome (truly DE =
 ##                 |expected log2FC| > 0.5; called = FDR < 0.05; wrong-sign calls
-##                 count as false discoveries); precision / recall / F1 top-left,
-##                 R2 / slope bottom-right
-##   e     pE      read-level support across biotypes, one row of facets per protocol
-##   f     pF      novel transcript length (density), medians labelled
-##   g     pG      UIC sharing per protocol (multi-exon novel transcripts)
-##   h     pH      UIC sharing by length (point size = transcripts in the bin)
-##   i     pI      transcript ends within an identical UIC (ECDF of |d5| / |d3|
+##                 count as false discoveries); DE precision / sensitivity / F1
+##                 top-left, sequins tested + R2 / slope bottom-right
+##   f     pE      read-level support across biotypes, one row of facets per protocol
+##   g     pF      novel transcript length (density), medians labelled
+##   h     pG      UIC sharing per protocol (multi-exon novel transcripts)
+##   i     pH      UIC sharing by length (point size = transcripts in the bin)
+##   j     pI      transcript ends within an identical UIC (ECDF of |d5| / |d3|
 ##                 per protocol pair); note = annotation agreement among shared UICs
+## (v2: new panel b; the old b-i are now c-j. Identification numbers live only in
+## panel b; panels c-e no longer repeat them.)
 ##
 ## Layout = the final Fig. 1 (manuscript/Figure1_2.pdf, an A3 page, 297 x 420 mm):
 ## every panel is saved at the size it has on that page, with the font sizes,
@@ -35,12 +39,14 @@
 ## Needs (run first): 01_sequin_edger.R, 02_sirv_ercc.R, 03_ujc_report.R,
 ##   04_ujc_length.R, 05_read_support.R; Anaquin (sequin totals)
 ## Outputs
-##   figures/fig1_panels/fig1{b..i}_*.{pdf,svg,png}       (svg = editable text)
+##   figures/fig1_panels/fig1{b..j}_*.{pdf,svg,png}       (svg = editable text)
 ##   figure-panels/results/figure_tables/
 ##     spikeins_detected.csv                 detected / in the mix, every spike-in type
 ##     table_spikeins_detected.csv           the same as "n / total (%)"
 ##     table_sequin_metrics.csv              sequin DE metrics, gene and isoform level
 ##     table_spikein_identification.csv      novel models on spike-ins, Bambu vs validated
+##     spikein_identification_by_set.csv     panel b: detected, expected, FP, recall,
+##                                           precision, F1 per spike-in set x protocol
 ##     table_ujc_annotation_agreement.csv    annotation agreement among shared UICs
 ##     novel_class_codes.csv                 novel transcripts by biotype x class code
 ##     supp_novel_biotype_classcode_longbench.csv  (the same, supplementary-table layout)
@@ -51,7 +57,7 @@ suppressPackageStartupMessages({
   library(tidyverse)
 })
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/longbench/00_paths.R")
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/longbench/00_paths.R")
 source(file.path(helper_dir, "plot_theme.R"))       # font_family, base_theme, protocol_cols, npg_cols, plat_labels
 source(file.path(helper_dir, "figure_helpers.R"))   # save_panel, read_support_plot
 dir.create(tab_dir, showWarnings = FALSE, recursive = TRUE)
@@ -130,8 +136,9 @@ e0  <- map_dfr(platforms, function(p)
   mutate(protocol = factor(protocol, levels = prot_levels))
 
 ## ------------------------------------- spike-ins detected (tables) ------
-## sequins in the mix (Anaquin); a sequin is "detected" with >= 1 read across
-## samples (01, column `detected`); SIRV / ERCC: >= 1 read in any sample (02)
+## sequins in the mix (Anaquin) and SIRVs: "detected" = >= 3 reads in >= 2 libraries
+## (01, column `detected`; 02); ERCC: >= 1 read in >= 2 libraries (02; ERCCs are
+## single-exon and mostly low input, so the stricter rule would only measure depth)
 data("RnaQuinIsoformMixture", package = "Anaquin")
 sq_iso <- as.character(RnaQuinIsoformMixture$Name)
 sq_tot <- c(gene = n_distinct(sub("_[0-9]+$", "", sq_iso)), transcript = length(sq_iso))
@@ -170,9 +177,9 @@ fc_sum %>%
 
 ## spike-in identification, Bambu vs pulposeq-validated: every spike-in
 ## transcript is annotated, so any novel model on a spike-in sequence is a false
-## discovery. Recall = annotated spike-ins detected (>= 1 read); precision =
+## discovery. Recall = annotated spike-ins detected (>= 3 reads in >= 2 libraries); precision =
 ## detected / (detected + novel models). ERCCs: novel models only (their
-## detection is set by concentration, panel c).
+## detection is set by concentration, panel d).
 f2 <- function(x) sprintf("%.2f", x)
 bind_rows(
   sid %>% transmute(`Spike-in` = "Sequin isoforms", Protocol = protocol,
@@ -194,18 +201,92 @@ bind_rows(
   arrange(`Spike-in`, Protocol) %>%
   write_csv(file.path(tab_dir, "table_spikein_identification.csv"))
 
-## ---------------------------------------------------------------- b -------
+## ---- spike-in identification panel (Fig. 1b; the same code draws Fig. 2c) ----
+## One row per spike-in set x protocol: expected (isoforms in the mix), detected
+## (TP), fp_raw / fp_val = novel models on that set's sequences, Bambu output /
+## after pulposeq validation (every spike-in is annotated, so any novel model on
+## one is a false positive). Recall = TP / expected; precision = TP / (TP + FP).
+## (v3: vertical bars with the values on top, instead of lollipops)
+id_metrics <- function(id) {
+  id %>% mutate(recall        = detected / expected,
+                precision     = detected / (detected + fp_val),
+                f1            = 2 * precision * recall / (precision + recall),
+                precision_raw = detected / (detected + fp_raw),
+                f1_raw        = 2 * precision_raw * recall / (precision_raw + recall))
+}
+## Vertical bars, one facet per metric (recall, precision, F1); x = spike-in
+## set, one bar per protocol, the value printed on top of each bar (recall as
+## detected / expected). Bars and values are after pulposeq validation; where
+## the Bambu output (before validation) differs, its value follows in brackets.
+id_bars <- function(id, set_levels, prot_levels, cols, label_pt = 6, x_angle = 35) {
+  m_lev <- c("Recall", "Precision", "F1")
+  m_lab <- c(Recall = "Recall (detected / expected)", Precision = "Precision", F1 = "F1")
+  d <- id_metrics(id) %>%
+    mutate(set = factor(set, levels = set_levels), protocol = factor(protocol, levels = prot_levels))
+  with_raw <- function(v, raw) ifelse(abs(raw - v) >= 0.005, sprintf("%.2f (%.2f)", v, raw), sprintf("%.2f", v))
+  long <- bind_rows(
+    d %>% transmute(set, protocol, metric = "Recall", value = recall,
+                    label = sprintf("%d/%d", as.integer(detected), as.integer(expected))),
+    d %>% transmute(set, protocol, metric = "Precision", value = precision,
+                    label = with_raw(precision, precision_raw)),
+    d %>% transmute(set, protocol, metric = "F1", value = f1, label = with_raw(f1, f1_raw))) %>%
+    mutate(metric = factor(metric, levels = m_lev))
+  dodge <- position_dodge(width = 0.85)
+  ggplot(long, aes(set, value, fill = protocol)) +
+    geom_col(position = dodge, width = 0.8) +
+    geom_text(aes(label = label, group = protocol), position = dodge, angle = 90, hjust = -0.12,
+              vjust = 0.5, size = label_pt / .pt, family = font_family, colour = "grey15") +
+    facet_grid(. ~ metric, labeller = labeller(metric = m_lab)) +
+    ## headroom above 1 for the labels; the axis stops at 1
+    scale_y_continuous(limits = c(0, 1.5), breaks = seq(0, 1, 0.25),
+                       labels = c("0", "0.25", "0.5", "0.75", "1"), expand = c(0, 0)) +
+    scale_fill_manual(values = cols, name = NULL) +
+    labs(x = NULL, y = NULL) +
+    theme(panel.grid = element_blank(),
+          axis.text.x = if (x_angle == 0) element_text() else element_text(angle = x_angle, hjust = 1, vjust = 1))
+}
+
+## ------------------------------------------- b: spike-in identification ---
+## expected / detected from `det` (detection rules above); false positives =
+## novel models on the spike-in sequences (02: novel_models_on_spikeins.csv for
+## SIRV / ERCC, Bambu output "raw" and after pulposeq validation; 01:
+## sequin_identification.csv for sequins). E0 SIRVs sit on contigs SIRV1-SIRV7,
+## each long SIRV on its own contig (SIRV4001, ...).
+nm_sp <- read_csv(file.path(sirv_dir, "novel_models_on_spikeins.csv"),
+                  col_types = cols(.default = "c")) %>%
+  mutate(set = case_when(family == "ERCC" ~ "ERCC",
+                         grepl("^SIRV[1-7]$", seqname) ~ "SIRV E0",
+                         TRUE ~ "long SIRV"))
+fp_of <- function(p, s, st) sum(nm_sp$protocol == p & nm_sp$set == s & nm_sp$stage == st)
+id_sets <- c("SIRV E0", "long SIRV", "ERCC", "Sequins")
+idf <- det %>%
+  mutate(type = as.character(type), protocol = as.character(protocol)) %>%
+  filter(type %in% c("SIRV E0", "long SIRV", "ERCC", "Sequin isoforms")) %>%
+  transmute(set = if_else(type == "Sequin isoforms", "Sequins", type), protocol,
+            detected = n, expected = total)
+sid_c <- mutate(sid, protocol = as.character(protocol))
+idf$fp_raw <- mapply(function(p, s) if (s == "Sequins") sid_c$novel_raw[sid_c$protocol == p][1]
+                     else fp_of(p, s, "raw"), idf$protocol, idf$set)
+idf$fp_val <- mapply(function(p, s) if (s == "Sequins") sid_c$novel_validated[sid_c$protocol == p][1]
+                     else fp_of(p, s, "validated"), idf$protocol, idf$set)
+id_metrics(idf) %>%
+  mutate(set = factor(set, levels = id_sets), protocol = factor(protocol, levels = prot_levels)) %>%
+  arrange(set, protocol) %>%
+  write_csv(file.path(tab_dir, "spikein_identification_by_set.csv"))
+
+pID <- id_bars(idf, id_sets, prot_levels, protocol_cols, label_pt = 6) +
+  labs(title = "Spike-in identification",
+       subtitle = paste0("Detected: >= 3 reads in >= 2 libraries (ERCC: >= 1 read)\n",
+                         "False positive: a novel model on a spike-in sequence\n",
+                         "Precision, F1: after pulposeq validation (Bambu, before, if different)")) +
+  border(0.25) + leg_top
+
+## ------------------------------------------------- c: length bias -------
 e0_acc <- e0 %>% group_by(protocol) %>%
   summarise(within2 = mean(abs(median) <= 1), .groups = "drop")
-b_det <- det %>% filter(type %in% c("SIRV E0", "long SIRV")) %>%
-  mutate(type = as.character(type)) %>%
-  dplyr::select(protocol, type, n, total) %>%
-  pivot_wider(names_from = type, values_from = c(n, total))
-b_lab <- e0_acc %>% left_join(b_det, by = "protocol") %>%
-  left_join(dplyr::select(se, protocol, sirv_f1), by = "protocol") %>%
-  mutate(lab = sprintf("E0 = %d/%d\n%.0f%% within 2\u00d7\nlong SIRV = %d/%d\nF1 = %.2f",
-                       `n_SIRV E0`, `total_SIRV E0`, 100 * within2,
-                       `n_long SIRV`, `total_long SIRV`, sirv_f1),
+## identification numbers (E0 / long SIRV detected, F1) are in panel b
+b_lab <- e0_acc %>%
+  mutate(lab = sprintf("%.0f%% within 2\u00d7", 100 * within2),
          ## empty corner per protocol: bottom-left for ONT cDNA and ONT DRS (long
          ## SIRVs sit low on the right), bottom-right for PacBio
          left  = protocol != "PacBio",
@@ -225,16 +306,17 @@ pB <- ggplot(lb, aes(len, log2_ratio)) +
   labs(x = "Transcript length (kb)", y = "log2(observed / expected)", colour = "SIRV set",
        title = "Length bias",
        subtitle = paste0("Equimolar SIRVs; 0 = expected abundance; within 2\u00d7 = E0 isoforms with median ",
-                         "abundance within 2-fold\nof expected; F1 = SIRV identification after validation")) +
+                         "abundance within 2-fold of expected")) +
   theme(strip.text = element_text(size = 9.5)) + border(0.25) + leg_right(0.78)
 
-## ---------------------------------------------------------------- c -------
+## ---------------------------------------------------------- d: ERCC -------
+## ERCCs detected / in the mix: panel b
 c_lab <- se %>% arrange(protocol) %>%
-  left_join(filter(det, type == "ERCC") %>% dplyr::select(protocol, n, total), by = "protocol") %>%
-  mutate(label = sprintf("%s \u00b7 %d/%d, R\u00b2 = %.2f, LOD = %.1f",
-                         protocol, n, total, ercc_r2, ercc_lod70_amol_ul))
+  mutate(label = sprintf("%s \u00b7 R\u00b2 = %.2f, LOD = %.1f",
+                         protocol, ercc_r2, ercc_lod70_amol_ul))
 
-pD <- ggplot(filter(er, is.finite(log2_cpm)), aes(log2(conc), log2_cpm, colour = protocol)) +
+## plot and fit the same ERCCs: those passing the detection rule (02, `detected_rule`)
+pD <- ggplot(filter(er, is.finite(log2_cpm), detected_rule), aes(log2(conc), log2_cpm, colour = protocol)) +
   geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 0.5) +
   geom_point(size = 0.6, alpha = 0.8) +
   ## one line per protocol, 8 pt, 2.5 mm below the panel top, 3.9 mm apart
@@ -244,14 +326,14 @@ pD <- ggplot(filter(er, is.finite(log2_cpm)), aes(log2(conc), log2_cpm, colour =
   scale_y_continuous(expand = expansion(mult = c(0.05, 0.4))) +
   labs(x = "ERCC input (log2 amol/\u00b5l)", y = "log2 CPM (within ERCC)", colour = NULL,
        title = "ERCC dose response",
-       subtitle = "Detected / in mix; R\u00b2; LOD (amol/\u00b5l)") +
+       subtitle = "R\u00b2; LOD (amol/\u00b5l)") +
   border(0.25) + leg_right(0.85)
 
-## ---------------------------------------------------------------- d -------
+## ------------------------------------------------- e: sequin DE -------
 ## sequin ground truth, isoform level (edgeR, 01_sequin_edger.R)
 out_lev  <- c("true positive", "true negative", "false positive", "false negative", "wrong sign")
 out_cols <- c("true positive" = "grey15", "true negative" = "grey75", "false positive" = "#D55E00",
-              "false negative" = "#E69F00", "wrong sign" = "#CC79A7")      # as in Fig. 2c
+              "false negative" = "#E69F00", "wrong sign" = "#CC79A7")      # as in Fig. 2d
 out_labs <- c(out_lev[-5], "wrong sign (opposite DE direction)")
 y_cap    <- 9.5                    # |observed log2FC| drawn at most this far (triangles beyond)
 sq_lfc   <- 0.5                    # truth threshold of 01 (shaded band)
@@ -266,10 +348,16 @@ fc <- map_dfr(platforms, function(p)
          capped   = abs(obs_lfc) > y_cap,
          y        = pmax(pmin(obs_lfc, y_cap), -y_cap))
 
+## top-left: DE calls among the TESTED sequins (the points). Bottom-right: how
+## many sequins could be tested (>= 10 reads in >= 2 libraries), then R2 / slope;
+## that corner is empty by design (expected up, observed strongly down).
+## Sequins detected / in the mix: panel b.
 d_lab <- fc_sum %>%
   filter(level == "transcript") %>%
-  mutate(lab_top = sprintf("precision = %.2f\nrecall = %.2f\nF1 = %.2f", precision, sensitivity, f1),
-         lab_bot = sprintf("R\u00b2 = %.2f\nslope = %.2f", r2, slope))
+  mutate(lab_top = sprintf("precision = %.2f\nsensitivity = %.2f\nF1 = %.2f",
+                           precision, sensitivity, f1),
+         lab_bot = sprintf("%d tested\nR\u00b2 = %.2f\nslope = %.2f",
+                           as.integer(tested), r2, slope))
 
 pC <- ggplot(fc, aes(exp_lfc, y)) +
   annotate("rect", xmin = -sq_lfc, xmax = sq_lfc, ymin = -Inf, ymax = Inf, fill = "grey93") +
@@ -284,7 +372,8 @@ pC <- ggplot(fc, aes(exp_lfc, y)) +
   scale_colour_manual(values = out_cols, labels = out_labs, drop = FALSE, name = NULL) +
   scale_shape_manual(values = c(`FALSE` = 16, `TRUE` = 17), breaks = "TRUE",
                      labels = sprintf("|observed log2FC| > %.1f", y_cap), name = NULL) +
-  scale_y_continuous(expand = expansion(mult = c(0.05, 0.3))) +
+  ## bottom room: the tested + R2 / slope block sits below the data
+  scale_y_continuous(expand = expansion(mult = c(0.08, 0.3))) +
   facet_wrap(~ protocol, nrow = 1) +
   guides(colour = guide_legend(order = 1, ncol = 1, override.aes = list(size = 2)),
          shape  = guide_legend(order = 2, override.aes = list(size = 2, shape = 2))) +
@@ -295,7 +384,7 @@ pC <- ggplot(fc, aes(exp_lfc, y)) +
   theme(strip.text = element_text(size = 9.5), legend.spacing.y = unit(0, "mm")) +
   border(0.85) + leg_right(0.53)
 
-## ---------------------------------------------------------------- e -------
+## ---------------------------------------------------------------- f -------
 ## read-level support (05_read_support.R): protocols stacked, biotypes as rows
 prot_map <- c("LongBench ONT cDNA" = "ONT cDNA", "LongBench ONT DRS" = "ONT DRS",
               "LongBench PacBio" = "PacBio")
@@ -345,7 +434,7 @@ nov %>%
             `% of novel transcripts`, `% within biotype`) %>%
   write_csv(file.path(tab_dir, "supp_novel_biotype_classcode_longbench.csv"))
 
-## ---------------------------------------------------------------- f -------
+## ---------------------------------------------------------------- g -------
 f_lab <- nov %>% group_by(protocol) %>% summarise(m = median(len), .groups = "drop") %>%
   mutate(label = sprintf("%s = %.1f kb", protocol, m / 1000))
 
@@ -360,7 +449,7 @@ pF <- ggplot(nov, aes(len, colour = protocol)) +
   labs(x = "Spliced length (kb)", y = "Density", title = "Novel transcripts' length", subtitle = "Medians") +
   border(0.25)
 
-## ---------------------------------------------------------------- g -------
+## ---------------------------------------------------------------- h -------
 u <- read_tsv(file.path(ujc_dir, "ujc_table.tsv"), show_col_types = FALSE) %>%
   filter(structure == "multi-exon") %>%
   mutate(across(starts_with("present_"), ~ as.logical(as.character(.x))))
@@ -394,7 +483,7 @@ pG <- ggplot(nG, aes(pct, protocol, fill = share)) +
   theme(axis.text.y = element_text(size = 7, colour = "black"),
         legend.key.size = unit(3.9, "mm"))
 
-## ---------------------------------------------------------------- h -------
+## ---------------------------------------------------------------- i -------
 bin_levels <- c("<0.5 kb", "0.5-1 kb", "1-2 kb", "2-5 kb", ">5 kb")
 cb <- read_csv(file.path(ujc_dir, "length/corroboration_by_length.csv"), show_col_types = FALSE) %>%
   filter(n >= 10) %>%
@@ -418,7 +507,7 @@ pH <- ggplot(cb, aes(bin, pct_found, colour = found_in, group = found_in)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.key.spacing.x = unit(4, "mm"))
 
-## ---------------------------------------------------------------- i -------
+## ---------------------------------------------------------------- j -------
 ## annotation agreement among shared UICs (table + note in the panel)
 cj <- read_tsv(file.path(ujc_dir, "summary_disagreements.tsv"), show_col_types = FALSE) %>%
   filter(category == "ALL_shared") %>%
@@ -473,15 +562,19 @@ pI <- ggplot(ends, aes(dist + 1, colour = category)) +
 ## ======================================================= save panels ======
 ## one file per panel; size (width, height, mm) = the panel's extent on the
 ## final Fig. 1 page (A3) + the 0.5 mm plot margin on each side
+## v2: new panel b (size chosen for it, place it and adjust); the old b-i are
+## c-j, same sizes. Old files fig1b_length_bias.*, fig1c_ercc.*, ... are not
+## overwritten (new names): delete them from figures/fig1_panels/.
 panels <- list(
-  fig1b_length_bias           = list(p = pB, size = c(175.5,  85.4)),
-  fig1c_ercc                  = list(p = pD, size = c( 87.5,  75.1)),
-  fig1d_sequin_isoform        = list(p = pC, size = c(168.8,  73.9)),
-  fig1e_read_support          = list(p = pE, size = c( 94.4, 112.3)),
-  fig1f_novel_length          = list(p = pF, size = c( 66.6,  55.3)),
-  fig1g_uic_sharing           = list(p = pG, size = c( 79.8,  59.9)),
-  fig1h_uic_sharing_by_length = list(p = pH, size = c( 64.4, 111.5)),
-  fig1i_transcript_ends       = list(p = pI, size = c(104.7,  81.2))
+  fig1b_spikein_identification = list(p = pID, size = c(130.0,  80.0)),
+  fig1c_length_bias            = list(p = pB,  size = c(175.5,  85.4)),
+  fig1d_ercc                   = list(p = pD,  size = c( 87.5,  75.1)),
+  fig1e_sequin_isoform         = list(p = pC,  size = c(168.8,  73.9)),
+  fig1f_read_support           = list(p = pE,  size = c( 94.4, 112.3)),
+  fig1g_novel_length           = list(p = pF,  size = c( 66.6,  55.3)),
+  fig1h_uic_sharing            = list(p = pG,  size = c( 79.8,  59.9)),
+  fig1i_uic_sharing_by_length  = list(p = pH,  size = c( 64.4, 111.5)),
+  fig1j_transcript_ends        = list(p = pI,  size = c(104.7,  81.2))
 )
 for (nm in names(panels)) save_panel(panels[[nm]]$p, nm, panels[[nm]]$size, panel_dir)
 message("Done: ", length(panels), " panels in ", panel_dir, "; tables in ", tab_dir)

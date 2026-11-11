@@ -23,7 +23,7 @@
 
 suppressPackageStartupMessages(library(tidyverse))
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/longbench/00_paths.R")
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/longbench/00_paths.R")
 indir  <- ujc_dir                       # ujc_table.tsv from 03_ujc_report.R
 outdir <- file.path(indir, "length")
 dir.create(outdir, recursive = TRUE, showWarnings = FALSE)

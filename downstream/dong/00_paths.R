@@ -9,14 +9,19 @@
 ##                      downstream/dong/. Nothing else is written.
 ## ===========================================================================
 
-base       <- "C:/Users/mbarb/OneDrive/paper"
-data_dir   <- file.path(base, "dong", "results_oarfish")   # pulposeq --outdir of the Dong run
+project    <- "C:/Users/mbarb/OneDrive/pulposeq-oarfish"   # the run folders + the clone of this repo
+repo       <- file.path(project, "pulposeq-benchmarking-2026")
+base       <- repo
+data_dir   <- file.path(project, "dong")                    # pulposeq --outdir of the Dong run
 run_dir    <- c(dong = data_dir)                           # for the scripts shared with LongBench
-ref_gtf    <- file.path(base, "refs/gencode.v50.primary_assembly.annotation.gtf")  # pulposeq --annotation
+ref_dir    <- file.path(repo, "references")                # reference files shipped with the repo
+## GENCODE v50 GTF given to pulposeq (--annotation): too large for the repo,
+## so it stays outside it; point this to your copy
+ref_gtf    <- "C:/Users/mbarb/OneDrive/paper/refs/gencode.v50.primary_assembly.annotation.gtf"
 
-dg_dir     <- file.path(base, "downstream/dong")
+dg_dir     <- file.path(repo, "downstream/dong")
 helper_dir <- file.path(dg_dir, "helpers")
-shared_helper_dir <- file.path(base, "downstream/helpers")   # oarfish_counts.R
+shared_helper_dir <- file.path(repo, "downstream/helpers")   # oarfish_counts.R, spikein_counts.R
 ## columns: sample, group (TKI-resistant / TKI-sensitive), cell_line. The run's own
 ## samplesheet (config-runs/dong/samplesheet.csv) names the groups by cell line;
 ## this copy keeps the group labels the scripts use (H1975 = TKI-resistant,
@@ -46,7 +51,7 @@ de_dir     <- file.path(dg_dir, "diff-exp/results")              # 01: <level>/d
 seq_dir    <- file.path(dg_dir, "sequins/results")               # 02: sequin_de_results.csv, summary.csv
 cis_dir    <- file.path(dg_dir, "correlation-cis-1Mb/results")   # 03: circos_cis_de_pairs.csv, ...
 iso_dir    <- file.path(dg_dir, "isoformic/results")             # 04: tables/, plots/
-iso_paper  <- file.path(dg_dir, "isoformic/figures")             # 04: journal panels (Fig. 2g-k, m; ED Fig. 1)
+iso_paper  <- file.path(dg_dir, "isoformic/figures")             # 04: journal panels (Fig. 2h, j-l; ED Fig. 1)
 rs_dir     <- file.path(dg_dir, "read-support/results")          # 05
 tab_dir    <- file.path(dg_dir, "figure-panels/results/figure_tables")  # 06: numbers behind the panels
 panel_dir  <- file.path(dg_dir, "figure-panels/figures/fig2_panels")    # 06: one file per panel

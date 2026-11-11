@@ -1,6 +1,7 @@
 ## ---------------------------------------------------------------------------
-## 03_cis_circos.R - cis co-expression of novel transcripts (Dong)   (Fig. 2l)
-##   Fig. 2l = paper_cis_circos.{pdf,svg,png}; circos_cis_de_pairs.csv is the
+## 03_cis_circos.R - cis co-expression of novel transcripts (Dong)   (Fig. 2m, 2n)
+##   Fig. 2m = paper_cis_circos.{pdf,svg,png}, Fig. 2n = paper_cis_heatmap.{pdf,svg,png},
+##   both in the layout of the printed Figure 2 (A3 page); circos_cis_de_pairs.csv is the
 ##   cis-pair table read by 04_isoformic.R (was de/scripts/cis_top_pairs.csv)
 ##   Inputs : diff-exp/results/transcript/{logcpm.rds, de_*.csv} (01_de_edger.R; in this
 ##            oarfish version logCPM is computed from the RTA-divided oarfish counts),
@@ -9,6 +10,13 @@
 ##   Outputs: correlation-cis-1Mb/results/
 ## v5: no bold text; journal panel for Fig. 2 (paper_cis_circos.*, 6 pt, key
 ##     on the right, centre left blank, key also explains the inner circle)
+## v6: Fig. 2m and 2n drawn exactly as printed in Figure 2 (positions measured on
+##     the A3 page): 2m = the v5 circle at the same radius (6 pt), centred
+##     title + two-column key below it (8 pt); 2n = the cis-pair heatmap
+##     (pairs with an annotated protein-coding / lncRNA partner, numbered as on
+##     the circle; names 8 pt, rho / locus 7 pt, colour bar top right).
+##     (printed as Fig. 2l / 2m before the new Fig. 2c; the drawing is the same)
+##     The v5 right-key panel: write_v5_keyright <- TRUE (paper_cis_circos_keyright.*)
 ## Adapted to run on this computer; analysis and plots unchanged, except:
 ##   - fixed paths under dong/ (no working-directory search, no download)
 ##   - annotated coordinates from the Bambu annotated transcriptome GTF
@@ -25,7 +33,7 @@ suppressPackageStartupMessages({
 })
 
 ## ------------------------------------------------------------- settings ---
-source("C:/Users/mbarb/OneDrive/paper/downstream/dong/00_paths.R")   # data_dir, de_dir, cis_dir
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/dong/00_paths.R")   # data_dir, de_dir, cis_dir
 gtf_ref   <- run_path("ref_tx_gtf")
 gtf_novel <- run_path("novel_gtf")
 drop_chr  <- "chrY"      # female samples: chrY features are PAR copies
@@ -75,8 +83,8 @@ cat_cols <- setNames(c("#7F7F7F", "#0072B2", "#C9C9C9",
                        "#009E73", "#E69F00", "#CC79A7"), cat_levels)
 nov_cols <- cat_cols[grepl("^Novel", names(cat_cols))]
 de_cols  <- c(Up = "darkred", Down = "darkblue", NS = "grey85")
-hm_cols  <- colorRampPalette(c("#3B4CC0", "#7B9FF9", "#C0D4F5", "#F2F2F2",
-                               "#F2CBB7", "#EE8468", "#B40426"), space = "Lab")(100)
+hm_anchor <- c("#3B4CC0", "#7B9FF9", "#C0D4F5", "#F2F2F2", "#F2CBB7", "#EE8468", "#B40426")
+hm_cols  <- colorRampPalette(hm_anchor, space = "Lab")(100)
 rho_col  <- colorRamp2(seq(-1, 1, length.out = 7),
                        c("#3B4CC0", "#7B9FF9", "#C0D4F5", "#F2F2F2",
                          "#F2CBB7", "#EE8468", "#B40426"))
@@ -442,6 +450,50 @@ KEY_MIN_PT   <- 7                # message if fitting pushes the key below this 
 POSTER_HEATMAP_CM <- c(14, 24)   # width, height of the poster heatmap panel
 cm2in <- function(x) x / 2.54
 
+## ---- v6: Fig. 2m / 2n as printed (Figure 2, A3 page) ------------------------
+## Every position below was measured on the printed page (mm). Offsets for 2m
+## are from the circle centre; 2n positions are from the panel's top-left corner.
+##
+## Fig. 2m: the v5 circle at exactly the same size. circlize draws the canvas
+## (+/- canvas) with plot()'s 4 % padding per side, so +/- canvas spans
+## 2 * canvas * 1.08 units; v5 = 133 mm for canvas 1.08, i.e. 57.0 mm per unit.
+## The circle sits in a W x W square at the top of the panel; title and key below.
+CIRCOS_FIG_MM    <- c(123, 163.5)                         # width, height (mm)
+MM_PER_UNIT <- PAPER_CIRCOS_MM[2] / (2 * 1.08 * 1.08)   # v5 circle scale
+FS_CIRCOS_FIG <- modifyList(FS_PAPER, list(
+  key_side = "paper",
+  canvas   = CIRCOS_FIG_MM[1] / (2 * 1.08 * MM_PER_UNIT), # same mm per unit as v5
+  key_frac = 1 - CIRCOS_FIG_MM[1] / CIRCOS_FIG_MM[2],          # bottom share of the page = key
+  key      = 8 / 12,                                 # title, subtitle and key: 8 pt
+  dev_mm   = CIRCOS_FIG_MM))
+CIRCOS_FIG_KEY <- list(
+  title_dx = -0.4, title_dy = 67.1, sub_dy = 70.8,   # title / subtitle centres
+  row1_dy  = 78.4, row_h = 3.45,                      # 7 key rows
+  x_lab    = -35.6,                                   # left column labels (left edge)
+  x_de     = -16.65, x_ns = -8.1, sw_len = 6.05,      # DE / not-DE swatch centres, length
+  de_col   = c("grey20", "grey20"), ns_col = c("grey60", "grey65"),   # annotated, novel
+  de_lwd   = c(0.6, 2.8),         ns_lwd = c(0.6, 1.6),
+  link_len = 3.7, link_txt = 5.4, link_lty_neg = "64", # link swatch, text start, dashes
+  x_box    = 5.3, box_w = 3.4, box_h = 2.1, x_box_txt = 10.4)   # right column (colours)
+
+## Fig. 2n: pairs whose partner is annotated protein-coding or lncRNA (as in
+## 04_isoformic.R); sample columns HCC827_1-3 | H1975_1-3; z-score of
+## log2(normalised count + 1) per row, colour limits = +/- the largest |z| shown
+HM_FIG_KEEP <- c("Annotated protein-coding", "Annotated lncRNA")
+HM_FIG <- list(
+  width   = 82.7,                       # mm; the height follows the number of pairs
+  y_tile0 = 3.66,                       # top of the first tile row
+  row_dy  = 3.52, pair_dy = 9.146, tile_h = 3.2,     # novel -> partner row, pair -> pair
+  x_tile1 = 32.82, x_tile2 = 41.96, tile_dx = 2.94, tile_w = 2.78,   # HCC827 | H1975 tiles
+  x_cat   = 29.94, cat_w = 2.14,        # biotype square
+  x_name  = 28.45,                      # right edge of the transcript names
+  x_num   = 3.15,                       # right edge of the pair numbers
+  x_side  = 52.95,                      # left edge of rho / locus
+  y_head  = 1.54,                       # centre of HCC827 / H1975
+  bar_x   = 72.25, bar_w = 2.73, bar_top = 13.75, bar_h = 18.9,   # colour bar
+  x_bar_title = 71.7, y_bar_title = c(6.15, 9.55), x_bar_lab = 76.5,
+  pt_name = 8, pt_side = 7, pt_head = 8, pt_bar = 8)
+
 ## part = "both" (combined figure), "circos" or "heatmap" (poster panels).
 ## Pairs are numbered 1..n in genome order: the same number marks the zoomed
 ## pair on the circle and its rows in the heatmap.
@@ -460,11 +512,12 @@ draw <- function(fam, part = "both", fs = FS_FULL) {
     ## the genome circle and links there would be invisible.
     key_right <- identical(fs$key_side, "right")
     key_below <- identical(fs$key_side, "below")
+    key_paper <- identical(fs$key_side, "paper")   # v6: Fig. 2m as printed
     lk    <- if (is.null(fs$lwd_k)) 1 else fs$lwd_k        # line-width factor
-    key_h <- if (part == "both") 0.12 else if (isTRUE(fs$centre_key) || key_right || key_below) 0 else 0.16
+    key_h <- if (part == "both") 0.12 else if (isTRUE(fs$centre_key) || key_right || key_below || key_paper) 0 else 0.16
     r_in  <- NA                    # inner radius of the zoom transcripts (set in f_inner)
     par(fig = if (part == "both") c(0, 0.58, key_h, 1) else if (key_right) c(0, fs$circ_frac, 0, 1)
-              else if (key_below) c(0, 1, fs$key_frac, 1) else c(0, 1, key_h, 1))
+              else if (key_below || key_paper) c(0, 1, fs$key_frac, 1) else c(0, 1, key_h, 1))
     on.exit(circos.clear(), add = TRUE)
     circos.clear()
 
@@ -714,8 +767,47 @@ draw <- function(fam, part = "both", fs = FS_FULL) {
       text(x2, y, "+ / \u2212 = transcript strand", adj = c(0, 0.5), cex = cex, col = ink)
     }
 
+    ## ---- v6 Fig. 2m as printed: title + two-column key under the circle -------
+    ## coordinates in mm (x from the left, y from the top of the panel); the
+    ## circle centre is the centre of the W x W square at the top
+    if (key_paper) {
+      W  <- fs$dev_mm[1]; H <- fs$dev_mm[2]; K <- CIRCOS_FIG_KEY
+      par(fig = c(0, 1, 0, 1), new = TRUE, mar = c(0, 0, 0, 0))
+      plot.new(); plot.window(c(0, W), c(H, 0), xaxs = "i", yaxs = "i")
+      cx  <- W / 2; cy <- W / 2
+      cex <- fs$key
+      text(cx + K$title_dx, cy + K$title_dy, "Cis-acting regulation pairs", cex = cex, col = ink)
+      text(cx + K$title_dx, cy + K$sub_dy, "line = log2FC H1975 / HCC827", cex = cex, col = "grey35")
+      ry <- cy + K$row1_dy + K$row_h * (0:6)            # row centres
+      xl <- cx + K$x_lab
+      ## left column: strand-track lines (rows 1-3), cis links (5-6), strand signs (7)
+      text(cx + c(K$x_de, K$x_ns), ry[1], c("DE", "not DE"), cex = cex, col = ink)
+      h  <- K$sw_len / 2
+      for (r in 1:2) {
+        y <- ry[r + 1]
+        text(xl, y, c("annotated", "novel")[r], adj = c(0, 0.5), cex = cex, col = ink)
+        segments(cx + K$x_de - h, y, cx + K$x_de + h, y, col = K$de_col[r], lwd = K$de_lwd[r], lend = 1)
+        segments(cx + K$x_ns - h, y, cx + K$x_ns + h, y, col = K$ns_col[r], lwd = K$ns_lwd[r], lend = 1)
+      }
+      for (k in 1:2) {
+        y <- ry[4 + k]
+        segments(xl, y, xl + K$link_len, y, col = ink, lwd = 1.3 * lk, lend = 1,
+                 lty = if (k == 1) "solid" else K$link_lty_neg)
+        text(xl + K$link_txt, y, c("link: ρ > 0", "link: ρ < 0")[k], adj = c(0, 0.5),
+             cex = cex, col = ink)
+      }
+      text(xl, ry[7], "+ / − = transcript strand", adj = c(0, 0.5), cex = cex, col = "grey35")
+      ## right column: colours of the transcript bars in the inner circle
+      c_lab <- sub("^Novel ", "novel ", sub("^Annotated ", "", names(cat_cols)))
+      for (r in seq_along(cat_cols)) {
+        rect(cx + K$x_box, ry[r] - K$box_h / 2, cx + K$x_box + K$box_w, ry[r] + K$box_h / 2,
+             col = cat_cols[r], border = NA)
+        text(cx + K$x_box_txt, ry[r], c_lab[r], adj = c(0, 0.5), cex = cex, col = ink)
+      }
+    }
+
     ## ---- key under the circle: the DE / not-DE encoding ----------------------
-    if (!isTRUE(fs$centre_key) && !key_right && !key_below) {
+    if (!isTRUE(fs$centre_key) && !key_right && !key_below && !key_paper) {
     par(fig = if (part == "both") c(0, 0.58, 0, key_h) else c(0, 1, 0, key_h),
         new = TRUE, mar = c(0, 0, 0, 0))
     plot.new(); plot.window(c(0, 1), c(0, 1))
@@ -824,13 +916,87 @@ cairo_ok <- capabilities("cairo") && isTRUE(tryCatch({
 }, warning = function(w) { try(dev.off(), silent = TRUE); FALSE },
    error = function(e) FALSE))
 
+## ---- v6 Fig. 2n as printed: cis-pair heatmap -----------------------------------
+## rows = the circos pairs whose partner is annotated protein-coding / lncRNA
+## (HM_FIG_KEEP), numbered as on the circle; columns = HCC827_1-3 | H1975_1-3
+m_idx <- which(as.character(sel$partner_category) %in% HM_FIG_KEEP & !sel$partner_novel)
+message(sprintf("Fig. 2n: %d of %d circos pairs (left out: %s)", length(m_idx), nrow(sel),
+                paste(setdiff(seq_len(nrow(sel)), m_idx), collapse = ", ")))
+smp_m <- c(sort(names(grp)[grp == grp_ref]), sort(names(grp)[grp == grp_num]))
+z_m <- log2(rds$norm[unique(c(sel$novel[m_idx], sel$partner[m_idx])), smp_m, drop = FALSE] + 1)
+z_m <- t(scale(t(z_m)))
+z_m[!is.finite(z_m)] <- 0                       # a row without variance = 0
+z_m_lim  <- max(abs(z_m))                       # colour limits = +/- the largest |z|
+dist_m   <- ifelse(sel$distance_bp == 0, "overlapping",
+                   paste(prettyNum(round(sel$distance_bp / 1e3), big.mark = ","), "kb"))
+hm_fig_height <- function(n) with(HM_FIG, y_tile0 + (n - 1) * pair_dy + row_dy + tile_h + 0.56)
+
+draw_hm_fig <- function(fam) {
+  G <- HM_FIG; n <- length(m_idx); H <- hm_fig_height(n)
+  par(family = fam, mar = c(0, 0, 0, 0), xpd = NA)
+  plot.new(); plot.window(c(0, G$width), c(H, 0), xaxs = "i", yaxs = "i")   # mm, y down
+  ramp <- grDevices::colorRamp(hm_anchor, space = "Lab")
+  zcol <- function(v) grDevices::rgb(ramp(pmin(1, pmax(0, (v + z_m_lim) / (2 * z_m_lim)))),
+                                     maxColorValue = 255)
+  n_ref  <- sum(grp[smp_m] == grp_ref)
+  x_left <- c(G$x_tile1 + G$tile_dx * (seq_len(n_ref) - 1),
+              G$x_tile2 + G$tile_dx * (seq_len(length(smp_m) - n_ref) - 1))
+  ## line names, centred over their tiles
+  for (g in 1:2) {
+    k <- if (g == 1) seq_len(n_ref) else setdiff(seq_along(smp_m), seq_len(n_ref))
+    text(mean(range(x_left[k]) + c(0, G$tile_w)), G$y_head, line_lab[[c(grp_ref, grp_num)[g]]],
+         cex = G$pt_head / 12, col = "black")
+  }
+  for (j in seq_len(n)) {
+    i   <- m_idx[j]
+    top <- G$y_tile0 + (j - 1) * G$pair_dy
+    yc  <- top + c(0, G$row_dy) + G$tile_h / 2          # novel row, partner row
+    f   <- c(sel$novel[i], sel$partner[i])
+    cat <- as.character(c(sel$novel_category[i], sel$partner_category[i]))
+    for (r in 1:2) {
+      yt <- top + (r - 1) * G$row_dy
+      rect(x_left, yt, x_left + G$tile_w, yt + G$tile_h, col = zcol(z_m[f[r], smp_m]), border = NA)
+      rect(G$x_cat, yt, G$x_cat + G$cat_w, yt + G$tile_h, col = cat_cols[cat[r]], border = NA)
+      text(G$x_name, yc[r], f[r], adj = c(1, 0.5), cex = G$pt_name / 12, col = "black")
+    }
+    text(G$x_num, mean(yc), i, adj = c(1, 0.5), cex = G$pt_name / 12, col = "black")
+    text(G$x_side, yc[1], sprintf("ρ = %+.2f", sel$rho[i]), adj = c(0, 0.5),
+         cex = G$pt_side / 12, col = "black")
+    text(G$x_side, yc[2], sprintf("%s · %s", sel$novel_chr[i], dist_m[i]), adj = c(0, 0.5),
+         cex = G$pt_side / 12, col = "grey40")
+  }
+  ## colour bar (top right): -lim at the bottom, +lim at the top
+  ymap <- function(v) G$bar_top + G$bar_h * (z_m_lim - v) / (2 * z_m_lim)
+  nb <- 100; v0 <- seq(-z_m_lim, z_m_lim, length.out = nb + 1)
+  bc <- zcol((head(v0, -1) + tail(v0, -1)) / 2)
+  rect(G$bar_x, ymap(head(v0, -1)), G$bar_x + G$bar_w, ymap(tail(v0, -1)),
+       col = bc, border = bc, lwd = 0.25)                 # border = fill: no seams between slices
+  tk <- seq(-floor(2 * z_m_lim) / 2, floor(2 * z_m_lim) / 2, by = 0.5)
+  segments(G$bar_x, ymap(tk), G$bar_x + 0.2 * G$bar_w, ymap(tk), col = "white", lwd = 0.5)
+  segments(G$bar_x + 0.8 * G$bar_w, ymap(tk), G$bar_x + G$bar_w, ymap(tk), col = "white", lwd = 0.5)
+  text(G$x_bar_lab, ymap(tk), formatC(tk, format = "f", digits = 1), adj = c(0, 0.5),
+       cex = G$pt_bar / 12, col = "black")
+  text(G$x_bar_title, G$y_bar_title, c("z-score", "(logCPM)"), adj = c(0, 0.5),
+       cex = G$pt_bar / 12, col = "black")
+}
+
 ## combined figure (screen / paper), as before
 for (ext in c("png", "pdf", "svg"))
   save_plot(file.path(outdir, paste0("circos_cis_de.", ext)), 14, 8.5, draw)
 
-## journal panel for Fig. 2 at its print size (placed at 100 % by the composite)
-for (ext in c("png", "pdf", "svg"))
+## Fig. 2m and 2n at their print size, as in the printed Figure 2 (place at 100 %)
+for (ext in c("png", "pdf", "svg")) {
   save_plot(file.path(outdir, paste0("paper_cis_circos.", ext)),
+            CIRCOS_FIG_MM[1] / 25.4, CIRCOS_FIG_MM[2] / 25.4,
+            function(fam) draw(fam, part = "circos", fs = FS_CIRCOS_FIG), res = 600)
+  if (length(m_idx))
+    save_plot(file.path(outdir, paste0("paper_cis_heatmap.", ext)),
+              HM_FIG$width / 25.4, hm_fig_height(length(m_idx)) / 25.4, draw_hm_fig, res = 600)
+}
+## v5 journal panel (key on the right of the circle); TRUE to write it as well
+write_v5_keyright <- FALSE
+if (write_v5_keyright) for (ext in c("png", "pdf", "svg"))
+  save_plot(file.path(outdir, paste0("paper_cis_circos_keyright.", ext)),
             PAPER_CIRCOS_MM[1] / 25.4, PAPER_CIRCOS_MM[2] / 25.4,
             function(fam) draw(fam, part = "circos", fs = FS_PAPER), res = 600)
 

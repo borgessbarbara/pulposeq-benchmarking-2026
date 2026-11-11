@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # =============================================================================
 #  04_isoformic.R - isoform-level interpretation of the Dong DE with isoformic
-#                   (Fig. 2g-k, m; Extended Data Fig. 1)
+#                   (Fig. 2h-l; Extended Data Fig. 1)
 #  isoformic: Mamede et al. 2025, NAR Genom Bioinform 7(4):lqaf176,
 #  doi:10.1093/nargab/lqaf176.
 #  Contrast : TKI_resistant (H1975) vs TKI_sensitive (HCC827) - ONT, Bambu (pulposeq)
@@ -30,12 +30,12 @@
 #      tables/ (00_normalisation_factors ... 23_cis_pairs_used), run_info.txt
 #    isoformic/figures/ (journal panels at print size, section 7)
 #      locus_{PDF,PNG,SVG}/EGFR.*, UBE2I.*   DE isoform profile + genomic context
-#                                             (EGFR locus = Fig. 2h)
+#                                             (EGFR locus = Fig. 2i)
 #      ed_profiles_events_cis.*               every event + cis-pair profile
 #                                             (Extended Data Fig. 1)
 #      ed_cis_pairs_heatmap.*                 cis-pair heatmap (Extended Data)
-#      fig2_panels/fig2{g,i,j,k}_profile_*.*  Fig. 2g, i-k as printed (section 7e)
-#      fig2_panels/fig2m_cis_pairs_heatmap.*  Fig. 2m as printed (section 7e)
+#      fig2_panels/fig2{h,j,k,l}_profile_*.*  Fig. 2h, j-l as printed (section 7e)
+#      (the cis-pair heatmap, Fig. 2n, and the circos, Fig. 2m: 03_cis_circos.R)
 #      (each .pdf, .svg, .png, .rds = the ggplot)
 #  PNG at 600 dpi; PDF (cairo) and SVG are vector.
 #
@@ -73,7 +73,7 @@
 #       cfg$out_dir and cs$paper_dir.
 # =============================================================================
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/dong/00_paths.R")   # data_dir, de_dir, cis_dir, iso_dir, iso_paper, ref_gtf
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/dong/00_paths.R")   # data_dir, de_dir, cis_dir, iso_dir, iso_paper, ref_gtf
 
 ## ---- 0a. CONFIG: events, cis pairs, panels (edit here) ------------------------
 cs <- list(
@@ -107,7 +107,7 @@ cs <- list(
     "UBE2I",    "UBE2I / UBE2I-AS1 \u00b7 AS lncRNA",             "lncRNA regulation",       "UBE2I-AS1",   NA,             NA,                  FALSE,          TRUE,   TRUE,
     "SNHG17",   "SNHG17 \u00b7 lncRNA isoforms",                         "lncRNA regulation",       NA,            NA,             NA,                  FALSE,          TRUE,   FALSE,
     "TPT1",     "TPT1 \u00b7 switch + NMD isoform loss",                 "Translation / survival",  NA,            NA,             NA,                  FALSE,          FALSE,  FALSE,
-    # lineage plasticity markers (as in the Fig. 2f heatmap): every tested isoform
+    # lineage plasticity markers (as in the Fig. 2g heatmap): every tested isoform
     # is shown (cs$profile_all_isoforms), kept out of the Ext. Data grid
     # (cs$panel_exclude); ASCL1 is not expressed (not tested) -> logged and skipped
     "ASCL1",    "ASCL1 \u00b7 neuroendocrine marker",                   "Lineage plasticity",      NA,            NA,             NA,                  FALSE,          FALSE,  FALSE,
@@ -133,7 +133,7 @@ cs <- list(
   # journal panels (section 7): drawn at print size for the Brief Communication
   run_paper        = TRUE,
   paper_dir        = iso_paper,                       # 00_paths.R
-  paper_loci       = c("EGFR", "UBE2I"),             # profile + locus panels (EGFR locus = Fig. 2h)
+  paper_loci       = c("EGFR", "UBE2I"),             # profile + locus panels (EGFR locus = Fig. 2i)
   paper_locus      = list(width_mm  = 171.5,         # profile + locus = full Fig. 2 row (174 mm) - 2.5 mm letter
                           font_pt   = 6,             # Nature: 5-7 pt
                           max_tx    = 8,             # isoforms per locus (DE first)
@@ -2406,7 +2406,7 @@ if (nrow(cis)) {
   # Built in millimetres (1 data unit = 1 mm, coord_fixed) so text and tiles
   # keep their print size; biotype squares are exactly as tall as the tiles.
   # Returns the plot and the page size (mm).
-  # Fig. 2m (section 7e) uses the extra arguments: scl scales every fixed mm
+  # (the printed Fig. 2n heatmap is drawn by 03_cis_circos.R) Extra arguments: scl scales every fixed mm
   # distance, case_gap = mm between the two lines' tiles (before scl), side_pt =
   # size of the rho / location text, fill_name = colour-bar title, line_col =
   # colour of the line names (NULL = group colours), cat_legend = biotype key
@@ -2638,7 +2638,7 @@ if (isTRUE(cs$run_paper)) {
   st_dpi(cs$paper_dpi)
 
   tryCatch({
-    # 7a. Loci (EGFR = Fig. 2h) - profile (left) + genomic context, DE models only
+    # 7a. Loci (EGFR = Fig. 2i) - profile (left) + genomic context, DE models only
     loc_evs <- evs[intersect(cs$paper_loci, names(evs))]
     miss <- setdiff(cs$paper_loci, names(loc_evs))
     if (length(miss)) log_step("  ! paper loci not among the events (skipped): %s", paste(miss, collapse = ", "))
@@ -2728,20 +2728,20 @@ if (isTRUE(cs$run_paper)) {
     }
 
     # 7e. Fig. 2 panels as printed in the final Fig. 2 (manuscript/Figure2.pdf,
-    # A3 page): g, i, j, k = single DE isoform profiles (titles / subtitles 10 pt,
-    # axis text 8 pt, isoform labels 6 pt, no legend); m = cis-pair heatmap
-    # (names 8 pt, rho / location 7 pt, scaled 1.34 x the Ext. Data heatmap,
-    # black line names, no biotype key). Size = the panel's extent on the page
-    # + 1 mm. (Fig. 2h, the EGFR locus, is locus_*/EGFR; Fig. 2l: 03_cis_circos.R.)
+    # A3 page): h, j, k, l = single DE isoform profiles (titles / subtitles 10 pt,
+    # axis text 8 pt, isoform labels 6 pt, no legend). Size = the panel's extent
+    # on the page + 1 mm. (Fig. 2i, the EGFR locus, is locus_*/EGFR; Fig. 2m, the
+    # circos, and Fig. 2n, the cis-pair heatmap: 03_cis_circos.R. Letters since the
+    # new Fig. 2c: the old g, i, j, k, l, m are h, j, k, l, m, n.)
     fig2_dir <- file.path(paper_dir, "fig2_panels")
     dir.create(fig2_dir, recursive = TRUE, showWarnings = FALSE)
     fig2_prof <- tibble::tribble(
       ~gene,   ~file,                       ~title,                                       ~subtitle,                    ~w,   ~h,
-      "EGFR",  "fig2g_profile_EGFR",        "EGFR \u00b7 AS intronic lncRNA",             "Driver locus",               48.7, 46.9,
-      "UBE2I", "fig2i_profile_UBE2I",       "UBE2I / UBE2I-AS1 \u00b7 AS lncRNA",         "lncRNA regulation",          48.7, 52.5,
-      "ELOC",  "fig2j_profile_ELOC",        "ELOC \u00b7 switch + AS intronic lncRNA",    "Hypoxia (VHL-HIF axis)",     60.1, 54.9,
-      "NDUFA6","fig2k_profile_NDUFA6",      "NDUFA6 \u00b7 isoform switch",               "OXPHOS isoform switching",   48.7, 54.9,
-      # lineage plasticity markers: not in the printed Fig. 2, same style and size as k
+      "EGFR",  "fig2h_profile_EGFR",        "EGFR \u00b7 AS intronic lncRNA",             "Driver locus",               48.7, 46.9,
+      "UBE2I", "fig2j_profile_UBE2I",       "UBE2I / UBE2I-AS1 \u00b7 AS lncRNA",         "lncRNA regulation",          48.7, 52.5,
+      "ELOC",  "fig2k_profile_ELOC",        "ELOC \u00b7 switch + AS intronic lncRNA",    "Hypoxia (VHL-HIF axis)",     60.1, 54.9,
+      "NDUFA6","fig2l_profile_NDUFA6",      "NDUFA6 \u00b7 isoform switch",               "OXPHOS isoform switching",   48.7, 54.9,
+      # lineage plasticity markers: not in the printed Fig. 2, same style and size as l
       "ASCL1", "marker_profile_ASCL1",      "ASCL1 \u00b7 neuroendocrine marker",         "Lineage plasticity",         48.7, 54.9,
       "POU2F3","marker_profile_POU2F3",     "POU2F3 \u00b7 tuft-cell marker",             "Lineage plasticity",         48.7, 54.9,
       "HMGA2", "marker_profile_HMGA2",      "HMGA2 \u00b7 EMT marker",                    "Lineage plasticity",         48.7, 54.9
@@ -2763,13 +2763,9 @@ if (isTRUE(cs$run_paper)) {
         save_paper(p, file.path(fig2_dir, r$file), r$w, r$h)
       }
     })
-    if (exists("cis_heatmap_paper") && nrow(cis)) {
-      k_m <- 1.34
-      hm2 <- cis_heatmap_paper(8, tile_w = 2.2 * k_m, row_h = 2.6 * k_m, pair_gap = 1.6 * k_m, scl = k_m,
-                               case_gap = 0.3 / k_m, side_pt = 7, fill_name = "z-score\n(logCPM)",
-                               line_col = "black", cat_legend = FALSE)
-      save_paper(hm2$plot, file.path(fig2_dir, "fig2m_cis_pairs_heatmap"), 82.7, 102.4)
-    }
+    # Fig. 2n (cis-pair heatmap) is no longer written here: 03_cis_circos.R draws
+    # it in the printed layout (paper_cis_heatmap.*). This version rendered its
+    # tiles at ~0.89 x their printed size inside the fixed 82.7 x 102.4 mm page.
   }, finally = st_dpi(300))                        # back to the plot_theme.R default
   log_step("Journal panels done: %s", paper_dir)
 }

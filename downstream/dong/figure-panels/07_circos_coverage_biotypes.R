@@ -30,7 +30,7 @@ suppressPackageStartupMessages({
   library(circlize)
 })
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/dong/00_paths.R")   # data_dir, helper_dir, res_dir, fig_dir
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/dong/00_paths.R")   # data_dir, helper_dir, res_dir, fig_dir
 
 # -----------------------------------------------------------------------------
 # 0. Configuration -- edit here

@@ -8,14 +8,14 @@
 # script (OK / FAILED / SKIPPED + time); everything the script prints goes to
 # its log file in downstream/logs/<date_time>/.
 #
-# Use: Rscript "C:/Users/mbarb/OneDrive/paper/downstream/run_all.R"
+# Use: Rscript "C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/run_all.R"
 #      or open it in RStudio and click Source. Edit the settings in section 0.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
 # 0. Settings -- edit here
 # -----------------------------------------------------------------------------
-BASE <- "C:/Users/mbarb/OneDrive/paper/downstream"
+BASE <- "C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream"
 
 RUN_FOLDERS   <- c("longbench", "dong")  # which folders, in this order
 SKIP          <- character(0)            # e.g. c("dong/diff-exp/01_de_edger.R") to reuse old results
@@ -24,11 +24,15 @@ STOP_ON_ERROR <- FALSE  # FALSE: a failed script only skips the scripts that nee
                         # TRUE : stop at the first failure
 
 # scripts in run order (<analysis>/<script>, relative to the dataset folder),
-# with the scripts they need (same dataset) - see README.md
+# with the scripts they need (same dataset) - see README.md.
+# "<script>@<arg>" runs the script with that argument: "@bambu" repeats a
+# spike-in script on Bambu's counts of the same runs (quantifier comparison)
 PIPELINE <- list(
   longbench = list(
     "spike-ins/01_sequin_edger.R"                = character(0),
     "spike-ins/02_sirv_ercc.R"                   = character(0),
+    "spike-ins/01_sequin_edger.R@bambu"          = character(0),
+    "spike-ins/02_sirv_ercc.R@bambu"             = character(0),
     "unique_intron_chains/03_ujc_report.R"       = character(0),
     "unique_intron_chains/04_ujc_length.R"       = "unique_intron_chains/03_ujc_report.R",
     "read-support/05_read_support.R"             = character(0),
@@ -41,6 +45,10 @@ PIPELINE <- list(
   dong = list(
     "diff-exp/01_de_edger.R"                     = character(0),
     "sequins/02_sequin_edger.R"                  = character(0),
+    "sequins/02_sequin_edger.R@bambu"            = character(0),
+    ## LongBench script that also needs the Dong sequin results, so it runs here
+    "../longbench/spike-ins/08_quantifier_comparison.R" = c("sequins/02_sequin_edger.R",
+                                                            "sequins/02_sequin_edger.R@bambu"),
     "correlation-cis-1Mb/03_cis_circos.R"        = "diff-exp/01_de_edger.R",
     "isoformic/04_isoformic.R"                   = c("diff-exp/01_de_edger.R", "correlation-cis-1Mb/03_cis_circos.R"),
     "read-support/05_read_support.R"             = character(0),
@@ -86,9 +94,12 @@ cat(sprintf("run_all.R  |  R %s  |  logs: %s\n\n", getRversion(), log_dir))
 # -----------------------------------------------------------------------------
 t_all <- Sys.time()
 for (i in seq_len(nrow(steps))) {
-  id  <- steps$id[i]
-  scr <- file.path(BASE, id)
-  log <- file.path(log_dir, gsub("/", "__", sub("\\.R$", ".log", id)))
+  id   <- steps$id[i]
+  part <- strsplit(id, "@", fixed = TRUE)[[1]]          # "<script>@<arg>"
+  scr  <- file.path(BASE, part[1])
+  args <- part[-1]
+  log  <- file.path(log_dir, paste0(gsub("[/.@]+", "_", sub("\\.R(@.*)?$", "", sub("^[./]+", "", id))),
+                                    if (length(args)) paste0("_", args) else "", ".log"))
   cat(sprintf("[%2d/%d] %-42s ", i, nrow(steps), id))
 
   ## not selected / skipped on purpose / missing / a needed script did not succeed
@@ -107,7 +118,7 @@ for (i in seq_len(nrow(steps))) {
     ## stdout and stderr (messages, warnings, errors) captured together, then
     ## written to the log (the log appears when the script ends)
     out <- tryCatch(
-      suppressWarnings(system2(rscript, c("--no-save", "--no-restore", shQuote(scr)),
+      suppressWarnings(system2(rscript, c("--no-save", "--no-restore", shQuote(scr), args),
                                stdout = TRUE, stderr = TRUE)),
       error = function(e) structure(conditionMessage(e), status = 1L),
       finally = setwd(owd))

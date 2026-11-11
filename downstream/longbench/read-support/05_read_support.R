@@ -42,7 +42,7 @@ suppressPackageStartupMessages({
 })
 
 ## ---------------------------------------------------------------- paths ---
-source("C:/Users/mbarb/OneDrive/paper/downstream/longbench/00_paths.R")   # base, rs_dir
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/longbench/00_paths.R")   # base, rs_dir
 out_dir <- rs_dir
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 

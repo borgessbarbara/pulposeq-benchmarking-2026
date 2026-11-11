@@ -11,7 +11,7 @@
 # Inputs : unique_intron_chains/results/ujc_table.tsv, unique_intron_chains/results/ujc_pair_deltas.tsv
 # Outputs: unique_intron_chains/results/supp_tables/ (one .tsv per table, captions .txt, .xlsx)
 # =============================================================================
-source("C:/Users/mbarb/OneDrive/paper/downstream/longbench/00_paths.R")
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/longbench/00_paths.R")
 
 opt <- list(ujc    = file.path(ujc_dir, "ujc_table.tsv"),
             pairs  = file.path(ujc_dir, "ujc_pair_deltas.tsv"),

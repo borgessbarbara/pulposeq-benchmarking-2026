@@ -52,7 +52,7 @@
 # Outputs: unique_intron_chains/results/
 # =============================================================================
 
-source("C:/Users/mbarb/OneDrive/paper/downstream/longbench/00_paths.R")
+source("C:/Users/mbarb/OneDrive/pulposeq-oarfish/pulposeq-benchmarking-2026/downstream/longbench/00_paths.R")
 
 ## ---- CONFIG (was the command line) --------------------------------------------
 opt <- list(
