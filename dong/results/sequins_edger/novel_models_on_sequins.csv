@@ -1,0 +1,9 @@
+stage,transcript_id,gene_id,strand,exonic_len,exons,start,end
+raw,BambuTx766,BambuGene178620,-,323,3,2135119,2136469
+raw,BambuTx767,BambuGene178550,+,635,3,2553118,2556327
+raw,BambuTx768,BambuGene178641,-,573,4,5290391,5304973
+raw,BambuTx769,BambuGene178647,-,1417,3,5556302,5570470
+raw,BambuTx770,BambuGene178647,-,391,2,5556348,5561337
+raw,BambuTx771,BambuGene178569,+,238,2,6179419,6181146
+raw,BambuTx772,BambuGene178654,-,818,2,6223343,6227342
+raw,BambuTx773,BambuGene178583,+,698,3,6949424,6951607

@@ -1,0 +1,2 @@
+annotated,detection_rule,detected_bambu,detected,not_detected,detected_any,sequin_reads_per_library,lod70_amol_ul,lod70_logistic_slope,capture_length_rho,novel_raw,precision_raw,f1_raw,recall,novel_validated,precision_validated,f1_validated
+164,>=3 reads in >=2 libraries,146,146,18,161,652760.5,0.1167524500347395,0.8631491935623555,-0.13209038677203458,8,0.948051948051948,0.9182389937106918,0.8902439024390244,0,1,0.9419354838709678
