@@ -1,0 +1,37 @@
+run,biotype,support,n,total,pct,pct_1dp
+Dong ONT cDNA,annotated protein-coding,full-length + unique,100934,226375,44.5870789618995,44.6%
+Dong ONT cDNA,annotated protein-coding,unique only,48302,226375,21.337161789066815,21.3%
+Dong ONT cDNA,annotated protein-coding,full-length only,30680,226375,13.552733296521259,13.6%
+Dong ONT cDNA,annotated protein-coding,neither,46459,226375,20.523025952512423,20.5%
+Dong ONT cDNA,annotated lncRNA,full-length + unique,27757,55988,49.57669500607273,49.6%
+Dong ONT cDNA,annotated lncRNA,unique only,11548,55988,20.625848396084876,20.6%
+Dong ONT cDNA,annotated lncRNA,full-length only,4247,55988,7.585554047295849,7.6%
+Dong ONT cDNA,annotated lncRNA,neither,12436,55988,22.211902550546547,22.2%
+Dong ONT cDNA,other biotypes,full-length + unique,2374,4799,49.46863929985414,49.5%
+Dong ONT cDNA,other biotypes,unique only,2414,4799,50.3021462804751,50.3%
+Dong ONT cDNA,other biotypes,full-length only,5,4799,0.10418837257762034,0.1%
+Dong ONT cDNA,other biotypes,neither,6,4799,0.1250260470931444,0.1%
+Dong ONT cDNA,predicted protein-coding,full-length + unique,288,290,99.3103448275862,99.3%
+Dong ONT cDNA,predicted protein-coding,unique only,0,290,0,0.0%
+Dong ONT cDNA,predicted protein-coding,full-length only,2,290,0.6896551724137931,0.7%
+Dong ONT cDNA,predicted protein-coding,neither,0,290,0,0.0%
+Dong ONT cDNA,novel lncRNA candidate,full-length + unique,560,561,99.82174688057042,99.8%
+Dong ONT cDNA,novel lncRNA candidate,unique only,0,561,0,0.0%
+Dong ONT cDNA,novel lncRNA candidate,full-length only,1,561,0.17825311942959002,0.2%
+Dong ONT cDNA,novel lncRNA candidate,neither,0,561,0,0.0%
+Dong ONT cDNA,predicted non-coding,full-length + unique,203,205,99.02439024390245,99.0%
+Dong ONT cDNA,predicted non-coding,unique only,1,205,0.4878048780487805,0.5%
+Dong ONT cDNA,predicted non-coding,full-length only,1,205,0.4878048780487805,0.5%
+Dong ONT cDNA,predicted non-coding,neither,0,205,0,0.0%
+Dong ONT cDNA,all annotated,full-length + unique,131065,287162,45.64148459754424,45.6%
+Dong ONT cDNA,all annotated,unique only,62264,287162,21.682534597196007,21.7%
+Dong ONT cDNA,all annotated,full-length only,34932,287162,12.164562163517457,12.2%
+Dong ONT cDNA,all annotated,neither,58901,287162,20.511418641742292,20.5%
+Dong ONT cDNA,all novel,full-length + unique,1051,1056,99.52651515151516,99.5%
+Dong ONT cDNA,all novel,unique only,1,1056,0.0946969696969697,0.1%
+Dong ONT cDNA,all novel,full-length only,4,1056,0.3787878787878788,0.4%
+Dong ONT cDNA,all novel,neither,0,1056,0,0.0%
+Dong ONT cDNA,all transcripts,full-length + unique,132116,288218,45.83891360012213,45.8%
+Dong ONT cDNA,all transcripts,unique only,62265,288218,21.603439063486665,21.6%
+Dong ONT cDNA,all transcripts,full-length only,34936,288218,12.121380344045132,12.1%
+Dong ONT cDNA,all transcripts,neither,58901,288218,20.43626699234607,20.4%

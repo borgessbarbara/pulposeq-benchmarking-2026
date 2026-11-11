@@ -1,0 +1,10 @@
+Spike-in,Protocol,In annotation,Detected,Recall,Novel models (Bambu),Novel models (validated),Precision (Bambu),Precision (validated),F1 (Bambu),F1 (validated)
+Sequin isoforms,ONT cDNA,164,110,0.67,0,0,1.00,1.00,0.80,0.80
+Sequin isoforms,ONT DRS,164,136,0.83,0,0,1.00,1.00,0.91,0.91
+Sequin isoforms,PacBio,164,156,0.95,0,0,1.00,1.00,0.97,0.97
+SIRVs (E0 + long),ONT cDNA,84,83,0.99,0,0,1.00,1.00,0.99,0.99
+SIRVs (E0 + long),ONT DRS,84,83,0.99,0,0,1.00,1.00,0.99,0.99
+SIRVs (E0 + long),PacBio,84,83,0.99,1,0,0.99,1.00,0.99,0.99
+ERCC,ONT cDNA,92,48,-,0,0,-,-,-,-
+ERCC,ONT DRS,92,42,-,0,0,-,-,-,-
+ERCC,PacBio,92,58,-,0,0,-,-,-,-

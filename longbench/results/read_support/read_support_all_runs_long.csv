@@ -1,0 +1,109 @@
+run,biotype,support,n,total,pct,pct_1dp
+LongBench ONT cDNA,annotated protein-coding,full-length + unique,97887,222282,44.03730396523335,44.0%
+LongBench ONT cDNA,annotated protein-coding,unique only,45180,222282,20.32553243177585,20.3%
+LongBench ONT cDNA,annotated protein-coding,full-length only,28325,222282,12.742822180833356,12.7%
+LongBench ONT cDNA,annotated protein-coding,neither,50890,222282,22.89434142215744,22.9%
+LongBench ONT cDNA,annotated lncRNA,full-length + unique,35864,68673,52.22430940835554,52.2%
+LongBench ONT cDNA,annotated lncRNA,unique only,13598,68673,19.801086307573573,19.8%
+LongBench ONT cDNA,annotated lncRNA,full-length only,5141,68673,7.486202728874521,7.5%
+LongBench ONT cDNA,annotated lncRNA,neither,14070,68673,20.488401555196365,20.5%
+LongBench ONT cDNA,other biotypes,full-length + unique,1774,4234,41.89891355692017,41.9%
+LongBench ONT cDNA,other biotypes,unique only,2441,4234,57.65233821445442,57.7%
+LongBench ONT cDNA,other biotypes,full-length only,11,4234,0.25980160604629193,0.3%
+LongBench ONT cDNA,other biotypes,neither,8,4234,0.1889466225791214,0.2%
+LongBench ONT cDNA,predicted protein-coding,full-length + unique,234,235,99.57446808510639,99.6%
+LongBench ONT cDNA,predicted protein-coding,unique only,0,235,0,0.0%
+LongBench ONT cDNA,predicted protein-coding,full-length only,1,235,0.425531914893617,0.4%
+LongBench ONT cDNA,predicted protein-coding,neither,0,235,0,0.0%
+LongBench ONT cDNA,novel lncRNA candidate,full-length + unique,441,442,99.77375565610859,99.8%
+LongBench ONT cDNA,novel lncRNA candidate,unique only,0,442,0,0.0%
+LongBench ONT cDNA,novel lncRNA candidate,full-length only,1,442,0.22624434389140272,0.2%
+LongBench ONT cDNA,novel lncRNA candidate,neither,0,442,0,0.0%
+LongBench ONT cDNA,predicted non-coding,full-length + unique,206,206,100,100.0%
+LongBench ONT cDNA,predicted non-coding,unique only,0,206,0,0.0%
+LongBench ONT cDNA,predicted non-coding,full-length only,0,206,0,0.0%
+LongBench ONT cDNA,predicted non-coding,neither,0,206,0,0.0%
+LongBench ONT cDNA,all annotated,full-length + unique,135525,295189,45.91126363109736,45.9%
+LongBench ONT cDNA,all annotated,unique only,61219,295189,20.738916423037445,20.7%
+LongBench ONT cDNA,all annotated,full-length only,33477,295189,11.340869747856457,11.3%
+LongBench ONT cDNA,all annotated,neither,64968,295189,22.008950198008733,22.0%
+LongBench ONT cDNA,all novel,full-length + unique,881,883,99.77349943374858,99.8%
+LongBench ONT cDNA,all novel,unique only,0,883,0,0.0%
+LongBench ONT cDNA,all novel,full-length only,2,883,0.22650056625141562,0.2%
+LongBench ONT cDNA,all novel,neither,0,883,0,0.0%
+LongBench ONT cDNA,all transcripts,full-length + unique,136406,296072,46.071901429382045,46.1%
+LongBench ONT cDNA,all transcripts,unique only,61219,296072,20.677065038233945,20.7%
+LongBench ONT cDNA,all transcripts,full-length only,33479,296072,11.30772244589154,11.3%
+LongBench ONT cDNA,all transcripts,neither,64968,296072,21.943311086492475,21.9%
+LongBench ONT DRS,annotated protein-coding,full-length + unique,168932,292996,57.65675981924668,57.7%
+LongBench ONT DRS,annotated protein-coding,unique only,48203,292996,16.451760433589538,16.5%
+LongBench ONT DRS,annotated protein-coding,full-length only,41155,292996,14.046266843233354,14.0%
+LongBench ONT DRS,annotated protein-coding,neither,34706,292996,11.84521290393043,11.8%
+LongBench ONT DRS,annotated lncRNA,full-length + unique,37748,75474,50.01457455547606,50.0%
+LongBench ONT DRS,annotated lncRNA,unique only,14756,75474,19.551103691337413,19.6%
+LongBench ONT DRS,annotated lncRNA,full-length only,6461,75474,8.560563902800965,8.6%
+LongBench ONT DRS,annotated lncRNA,neither,16509,75474,21.873757850385562,21.9%
+LongBench ONT DRS,other biotypes,full-length + unique,2490,4940,50.40485829959514,50.4%
+LongBench ONT DRS,other biotypes,unique only,2426,4940,49.10931174089069,49.1%
+LongBench ONT DRS,other biotypes,full-length only,19,4940,0.38461538461538464,0.4%
+LongBench ONT DRS,other biotypes,neither,5,4940,0.10121457489878542,0.1%
+LongBench ONT DRS,predicted protein-coding,full-length + unique,959,963,99.5846313603323,99.6%
+LongBench ONT DRS,predicted protein-coding,unique only,0,963,0,0.0%
+LongBench ONT DRS,predicted protein-coding,full-length only,4,963,0.4153686396677051,0.4%
+LongBench ONT DRS,predicted protein-coding,neither,0,963,0,0.0%
+LongBench ONT DRS,novel lncRNA candidate,full-length + unique,800,801,99.87515605493134,99.9%
+LongBench ONT DRS,novel lncRNA candidate,unique only,0,801,0,0.0%
+LongBench ONT DRS,novel lncRNA candidate,full-length only,1,801,0.12484394506866417,0.1%
+LongBench ONT DRS,novel lncRNA candidate,neither,0,801,0,0.0%
+LongBench ONT DRS,predicted non-coding,full-length + unique,310,311,99.67845659163987,99.7%
+LongBench ONT DRS,predicted non-coding,unique only,1,311,0.3215434083601286,0.3%
+LongBench ONT DRS,predicted non-coding,full-length only,0,311,0,0.0%
+LongBench ONT DRS,predicted non-coding,neither,0,311,0,0.0%
+LongBench ONT DRS,all annotated,full-length + unique,209170,373410,56.0161752497255,56.0%
+LongBench ONT DRS,all annotated,unique only,65385,373410,17.510243432152325,17.5%
+LongBench ONT DRS,all annotated,full-length only,47635,373410,12.75675530917758,12.8%
+LongBench ONT DRS,all annotated,neither,51220,373410,13.716826008944592,13.7%
+LongBench ONT DRS,all novel,full-length + unique,2069,2075,99.71084337349397,99.7%
+LongBench ONT DRS,all novel,unique only,1,2075,0.04819277108433735,0.0%
+LongBench ONT DRS,all novel,full-length only,5,2075,0.24096385542168675,0.2%
+LongBench ONT DRS,all novel,neither,0,2075,0,0.0%
+LongBench ONT DRS,all transcripts,full-length + unique,211239,375485,56.25764011877971,56.3%
+LongBench ONT DRS,all transcripts,unique only,65386,375485,17.41374488994234,17.4%
+LongBench ONT DRS,all transcripts,full-length only,47640,375485,12.687590716007298,12.7%
+LongBench ONT DRS,all transcripts,neither,51220,375485,13.64102427527065,13.6%
+LongBench PacBio,annotated protein-coding,full-length + unique,184125,303096,60.74807981629583,60.7%
+LongBench PacBio,annotated protein-coding,unique only,44555,303096,14.699963048011192,14.7%
+LongBench PacBio,annotated protein-coding,full-length only,40861,303096,13.481207274262939,13.5%
+LongBench PacBio,annotated protein-coding,neither,33555,303096,11.070749861430041,11.1%
+LongBench PacBio,annotated lncRNA,full-length + unique,37380,82748,45.17329723981244,45.2%
+LongBench PacBio,annotated lncRNA,unique only,19118,82748,23.103881664813652,23.1%
+LongBench PacBio,annotated lncRNA,full-length only,6880,82748,8.314400348044666,8.3%
+LongBench PacBio,annotated lncRNA,neither,19370,82748,23.40842074732924,23.4%
+LongBench PacBio,other biotypes,full-length + unique,1753,4918,35.64457096380642,35.6%
+LongBench PacBio,other biotypes,unique only,3142,4918,63.88775925172835,63.9%
+LongBench PacBio,other biotypes,full-length only,17,4918,0.34566897112647416,0.3%
+LongBench PacBio,other biotypes,neither,6,4918,0.12200081333875559,0.1%
+LongBench PacBio,predicted protein-coding,full-length + unique,770,777,99.09909909909909,99.1%
+LongBench PacBio,predicted protein-coding,unique only,0,777,0,0.0%
+LongBench PacBio,predicted protein-coding,full-length only,7,777,0.9009009009009009,0.9%
+LongBench PacBio,predicted protein-coding,neither,0,777,0,0.0%
+LongBench PacBio,novel lncRNA candidate,full-length + unique,700,701,99.85734664764622,99.9%
+LongBench PacBio,novel lncRNA candidate,unique only,0,701,0,0.0%
+LongBench PacBio,novel lncRNA candidate,full-length only,1,701,0.14265335235378032,0.1%
+LongBench PacBio,novel lncRNA candidate,neither,0,701,0,0.0%
+LongBench PacBio,predicted non-coding,full-length + unique,180,181,99.4475138121547,99.4%
+LongBench PacBio,predicted non-coding,unique only,0,181,0,0.0%
+LongBench PacBio,predicted non-coding,full-length only,1,181,0.5524861878453039,0.6%
+LongBench PacBio,predicted non-coding,neither,0,181,0,0.0%
+LongBench PacBio,all annotated,full-length + unique,223258,390762,57.134009960026816,57.1%
+LongBench PacBio,all annotated,unique only,66815,390762,17.098643163869568,17.1%
+LongBench PacBio,all annotated,full-length only,47758,390762,12.221761583777338,12.2%
+LongBench PacBio,all annotated,neither,52931,390762,13.545585292326276,13.5%
+LongBench PacBio,all novel,full-length + unique,1650,1659,99.45750452079567,99.5%
+LongBench PacBio,all novel,unique only,0,1659,0,0.0%
+LongBench PacBio,all novel,full-length only,9,1659,0.5424954792043399,0.5%
+LongBench PacBio,all novel,neither,0,1659,0,0.0%
+LongBench PacBio,all transcripts,full-length + unique,224908,392421,57.31293687137029,57.3%
+LongBench PacBio,all transcripts,unique only,66815,392421,17.026356897311814,17.0%
+LongBench PacBio,all transcripts,full-length only,47767,392421,12.172386289214899,12.2%
+LongBench PacBio,all transcripts,neither,52931,392421,13.488319942102997,13.5%

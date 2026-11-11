@@ -1,0 +1,4 @@
+Protocol	Novel transcript models	Multi-exon	Mono-exon	Median spliced length (nt)	Spliced length IQR (nt)	Assigned to a reference locus	Assigned to a novel locus
+ONTd	2,075	2,041 (98.4%)	34 (1.6%)	1,800	1,058-3,058	1,677 (80.8%)	398 (19.2%)
+ONTc	883	837 (94.8%)	46 (5.2%)	913	676-1,358	654 (74.1%)	229 (25.9%)
+PB	1,659	1,439 (86.7%)	220 (13.3%)	1,892	1,468-2,556	1,159 (69.9%)	500 (30.1%)

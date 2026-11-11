@@ -1,0 +1,19 @@
+Dataset,Protocol,Biotype,Class code (GffCompare),Novel transcripts,% of novel transcripts,% within biotype
+Dong,Dong ONT cDNA,lncRNA,junction match (j),247,23.390151515151516,44.02852049910874
+Dong,Dong ONT cDNA,lncRNA,contains reference (k),25,2.367424242424242,4.45632798573975
+Dong,Dong ONT cDNA,lncRNA,"retained intron (m, n)",2,0.1893939393939394,0.35650623885918004
+Dong,Dong ONT cDNA,lncRNA,"sense overlap (i, o, y)",48,4.545454545454546,8.556149732620321
+Dong,Dong ONT cDNA,lncRNA,"antisense (i, x)",179,16.950757575757574,31.907308377896612
+Dong,Dong ONT cDNA,lncRNA,intergenic (u),60,5.681818181818182,10.695187165775401
+Dong,Dong ONT cDNA,protein-coding,junction match (j),165,15.625,56.89655172413793
+Dong,Dong ONT cDNA,protein-coding,contains reference (k),101,9.56439393939394,34.827586206896555
+Dong,Dong ONT cDNA,protein-coding,"retained intron (m, n)",2,0.1893939393939394,0.6896551724137931
+Dong,Dong ONT cDNA,protein-coding,"sense overlap (i, o, y)",7,0.6628787878787878,2.413793103448276
+Dong,Dong ONT cDNA,protein-coding,"antisense (i, x)",14,1.3257575757575757,4.827586206896552
+Dong,Dong ONT cDNA,protein-coding,intergenic (u),1,0.0946969696969697,0.3448275862068966
+Dong,Dong ONT cDNA,non-coding,junction match (j),164,15.530303030303031,80
+Dong,Dong ONT cDNA,non-coding,contains reference (k),24,2.272727272727273,11.707317073170731
+Dong,Dong ONT cDNA,non-coding,"retained intron (m, n)",2,0.1893939393939394,0.975609756097561
+Dong,Dong ONT cDNA,non-coding,"sense overlap (i, o, y)",15,1.4204545454545454,7.317073170731708
+Dong,Dong ONT cDNA,non-coding,"antisense (i, x)",0,0,0
+Dong,Dong ONT cDNA,non-coding,intergenic (u),0,0,0

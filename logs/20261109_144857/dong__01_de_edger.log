@@ -1,0 +1,16 @@
+Figure font: Source Sans 3 (installed font C:/Windows/Fonts/SourceSans3-Regular.otf)
+gene      : 35681/35681 annotated named, 0 kept as ID, 259 novel (0 tagged), 309 disambiguated
+transcript: 287000/287000 annotated named, 0 kept as ID, 1056 novel (1056 tagged), 0 disambiguated
+gene: removed 3334 rRNA / processed-pseudogene features
+gene       tested  18749  up  4628  down  4374 | lncRNA tested  5059  up 1768  down  921
+transcript: removed 3329 rRNA / processed-pseudogene features
+transcript tested  59317  up  6177  down  4678 | lncRNA tested  6230  up 1758  down  756
+There were 50 or more warnings (use warnings() to see the first 50)
+# A tibble: 4 × 6
+  level      contrast                       biotype       Down    NS    Up
+  <chr>      <chr>                          <chr>        <int> <int> <int>
+1 gene       TKI_resistant_vs_TKI_sensitive lncRNA         899  2345  1697
+2 gene       TKI_resistant_vs_TKI_sensitive novel_lncRNA    22    25    71
+3 transcript TKI_resistant_vs_TKI_sensitive lncRNA         715  3607  1619
+4 transcript TKI_resistant_vs_TKI_sensitive novel_lncRNA    41   109   139
+Done: C:/Users/mbarb/OneDrive/paper/downstream/dong/results/de_edger

@@ -1,0 +1,47 @@
+protocol,biotype,cls,n,pct
+ONT cDNA,novel_lncRNA,junction match (j),175,19.8
+ONT cDNA,novel_lncRNA,contains reference (k),11,1.2
+ONT cDNA,novel_lncRNA,"retained intron (m, n)",2,0.2
+ONT cDNA,novel_lncRNA,"sense overlap (i, o, y)",50,5.7
+ONT cDNA,novel_lncRNA,"antisense (i, x)",130,14.7
+ONT cDNA,novel_lncRNA,intergenic (u),74,8.4
+ONT cDNA,novel_protein_coding,junction match (j),162,18.3
+ONT cDNA,novel_protein_coding,contains reference (k),64,7.2
+ONT cDNA,novel_protein_coding,"sense overlap (i, o, y)",4,0.5
+ONT cDNA,novel_protein_coding,"antisense (i, x)",4,0.5
+ONT cDNA,novel_protein_coding,intergenic (u),1,0.1
+ONT cDNA,novel_non_coding,junction match (j),168,19
+ONT cDNA,novel_non_coding,contains reference (k),26,2.9
+ONT cDNA,novel_non_coding,"sense overlap (i, o, y)",12,1.4
+ONT DRS,novel_lncRNA,junction match (j),336,16.2
+ONT DRS,novel_lncRNA,contains reference (k),51,2.5
+ONT DRS,novel_lncRNA,"retained intron (m, n)",2,0.1
+ONT DRS,novel_lncRNA,"sense overlap (i, o, y)",44,2.1
+ONT DRS,novel_lncRNA,"antisense (i, x)",250,12
+ONT DRS,novel_lncRNA,intergenic (u),118,5.7
+ONT DRS,novel_protein_coding,junction match (j),478,23
+ONT DRS,novel_protein_coding,contains reference (k),432,20.8
+ONT DRS,novel_protein_coding,"retained intron (m, n)",4,0.2
+ONT DRS,novel_protein_coding,"sense overlap (i, o, y)",19,0.9
+ONT DRS,novel_protein_coding,"antisense (i, x)",23,1.1
+ONT DRS,novel_protein_coding,intergenic (u),7,0.3
+ONT DRS,novel_non_coding,junction match (j),235,11.3
+ONT DRS,novel_non_coding,contains reference (k),57,2.7
+ONT DRS,novel_non_coding,"retained intron (m, n)",4,0.2
+ONT DRS,novel_non_coding,"sense overlap (i, o, y)",15,0.7
+PacBio,novel_lncRNA,junction match (j),179,10.8
+PacBio,novel_lncRNA,contains reference (k),29,1.7
+PacBio,novel_lncRNA,"retained intron (m, n)",2,0.1
+PacBio,novel_lncRNA,"sense overlap (i, o, y)",54,3.3
+PacBio,novel_lncRNA,"antisense (i, x)",307,18.5
+PacBio,novel_lncRNA,intergenic (u),130,7.8
+PacBio,novel_protein_coding,junction match (j),396,23.9
+PacBio,novel_protein_coding,contains reference (k),307,18.5
+PacBio,novel_protein_coding,"retained intron (m, n)",15,0.9
+PacBio,novel_protein_coding,"sense overlap (i, o, y)",14,0.8
+PacBio,novel_protein_coding,"antisense (i, x)",37,2.2
+PacBio,novel_protein_coding,intergenic (u),8,0.5
+PacBio,novel_non_coding,junction match (j),115,6.9
+PacBio,novel_non_coding,contains reference (k),47,2.8
+PacBio,novel_non_coding,"retained intron (m, n)",7,0.4
+PacBio,novel_non_coding,"sense overlap (i, o, y)",12,0.7

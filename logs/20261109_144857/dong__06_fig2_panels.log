@@ -1,0 +1,11 @@
+Figure font: Source Sans 3 (installed font C:/Windows/Fonts/SourceSans3-Regular.otf)
+marker genes not DE at gene level (not labelled): CYTOR, SLC2A1, MALAT1, NDUFA12, MUC1, MIR4435-2HG
+panel f: 109 isoforms from 20 marker genes (DE isoforms only)
+marker genes with no DE isoform in panel f: SFTPB, TOP2A, TPX2, DARS1-AS1, HAGLR
+  saved fig2a_read_support (129.3 x 69.8 mm)
+  saved fig2b_novel_biotype (60.9 x 74.2 mm)
+  saved fig2c_sequin_isoform (75.1 x 66.9 mm)
+  saved fig2d_sample_correlation (68.6 x 55.2 mm)
+  saved fig2e_volcano (111.3 x 85.2 mm)
+  saved fig2f_isoform_heatmap (80 x 215.8 mm)
+Done: 6 panels in C:/Users/mbarb/OneDrive/paper/downstream/dong/figures/fig2_panels

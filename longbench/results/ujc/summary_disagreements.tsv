@@ -1,0 +1,16 @@
+attribute	category	n_compared	n_concordant	n_discordant	pct_discordant
+pulposeq_transcript_biotype	ALL_shared	914	891	23	2.52
+pulposeq_transcript_biotype	shared_all	211	206	5	2.37
+pulposeq_transcript_biotype	ONTd+ONTc	232	227	5	2.16
+pulposeq_transcript_biotype	ONTd+PB	426	414	12	2.82
+pulposeq_transcript_biotype	ONTc+PB	45	44	1	2.22
+class_code	ALL_shared	914	902	12	1.31
+class_code	shared_all	211	206	5	2.37
+class_code	ONTd+ONTc	232	229	3	1.29
+class_code	ONTd+PB	426	422	4	0.94
+class_code	ONTc+PB	45	45	0	0
+host_gene	ALL_shared	762	750	12	1.57
+host_gene	shared_all	168	163	5	2.98
+host_gene	ONTd+ONTc	185	184	1	0.54
+host_gene	ONTd+PB	373	367	6	1.61
+host_gene	ONTc+PB	36	36	0	0

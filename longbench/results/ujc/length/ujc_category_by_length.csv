@@ -1,0 +1,26 @@
+bin,category,n,pct
+<0.5 kb,ONTc_only,1,33.3
+<0.5 kb,ONTd_only,2,66.7
+0.5-1 kb,ONTc_only,229,32.1
+0.5-1 kb,ONTd+ONTc,143,20
+0.5-1 kb,ONTd+PB,12,1.7
+0.5-1 kb,ONTd_only,282,39.5
+0.5-1 kb,PB_only,17,2.4
+0.5-1 kb,shared_all,31,4.3
+1-2 kb,ONTc+PB,28,2.4
+1-2 kb,ONTc_only,105,8.9
+1-2 kb,ONTd+ONTc,69,5.9
+1-2 kb,ONTd+PB,180,15.3
+1-2 kb,ONTd_only,288,24.4
+1-2 kb,PB_only,383,32.5
+1-2 kb,shared_all,126,10.7
+2-5 kb,ONTc+PB,17,1.5
+2-5 kb,ONTc_only,14,1.2
+2-5 kb,ONTd+ONTc,20,1.7
+2-5 kb,ONTd+PB,224,19.4
+2-5 kb,ONTd_only,474,41.1
+2-5 kb,PB_only,351,30.4
+2-5 kb,shared_all,54,4.7
+>5 kb,ONTd+PB,10,7
+>5 kb,ONTd_only,126,88.7
+>5 kb,PB_only,6,4.2

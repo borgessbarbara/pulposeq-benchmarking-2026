@@ -1,0 +1,173 @@
+[ONTd] 2075 novel transcripts (2041 multi-exon, 34 mono-exon)
+       gene_id                           2075/2075 present
+       pulposeq_transcript_biotype       2075/2075 present
+       class_code                        2075/2075 present
+[ONTc] 883 novel transcripts (837 multi-exon, 46 mono-exon)
+       gene_id                            883/883 present
+       pulposeq_transcript_biotype        883/883 present
+       class_code                         883/883 present
+[PB] 1659 novel transcripts (1439 multi-exon, 220 mono-exon)
+       gene_id                           1659/1659 present
+       pulposeq_transcript_biotype       1659/1659 present
+       class_code                        1659/1659 present
+
+input: 4617 novel transcripts across 3 protocols (ONTd=2075, ONTc=883, PB=1659)
+wrote ujc_table.tsv  (3492 rows)
+wrote ujc_pair_deltas.tsv  (1336 rows)
+
+identity check  spliced_2 - spliced_1 == d5 + d3 : 1336/1336 exact
+wrote summary_sharing.tsv  (12 rows)
+
+=== sharing ===
+                    category    n pct_of_all_entities pct_of_shared n_multiexon
+                  shared_all  211                6.04         23.09         211
+                   ONTd+ONTc  232                6.64         25.38         232
+                     ONTd+PB  426               12.20         46.61         426
+                     ONTc+PB   45                1.29          4.92          45
+                   ONTd_only 1206               34.54            NA        1172
+                   ONTc_only  395               11.31            NA         349
+                     PB_only  977               27.98            NA         757
+ TOTAL_shared(>=2 protocols)  914               26.17        100.00         914
+              TOTAL_entities 3492              100.00            NA        3192
+                  INPUT_ONTd 2075                  NA            NA        2041
+                  INPUT_ONTc  883                  NA            NA         837
+                    INPUT_PB 1659                  NA            NA        1439
+ n_monoexon
+          0
+          0
+          0
+          0
+         34
+         46
+        220
+          0
+        300
+         34
+         46
+        220
+wrote summary_disagreements.tsv  (15 rows)
+
+=== disagreements ===
+                   attribute   category n_compared n_concordant n_discordant
+ pulposeq_transcript_biotype ALL_shared        914          891           23
+ pulposeq_transcript_biotype shared_all        211          206            5
+ pulposeq_transcript_biotype  ONTd+ONTc        232          227            5
+ pulposeq_transcript_biotype    ONTd+PB        426          414           12
+ pulposeq_transcript_biotype    ONTc+PB         45           44            1
+                  class_code ALL_shared        914          902           12
+                  class_code shared_all        211          206            5
+                  class_code  ONTd+ONTc        232          229            3
+                  class_code    ONTd+PB        426          422            4
+                  class_code    ONTc+PB         45           45            0
+                   host_gene ALL_shared        762          750           12
+                   host_gene shared_all        168          163            5
+                   host_gene  ONTd+ONTc        185          184            1
+                   host_gene    ONTd+PB        373          367            6
+                   host_gene    ONTc+PB         36           36            0
+ pct_discordant
+           2.52
+           2.37
+           2.16
+           2.82
+           2.22
+           1.31
+           2.37
+           1.29
+           0.94
+           0.00
+           1.57
+           2.98
+           0.54
+           1.61
+           0.00
+wrote summary_deltas.tsv  (42 rows)
+
+=== end deltas (bp) ===
+                              grouping            group            metric    n
+                               overall all_shared_pairs            abs_d5 1336
+                               overall all_shared_pairs            abs_d3 1336
+                               overall all_shared_pairs abs_delta_spliced 1336
+                              category       shared_all            abs_d5  633
+                              category       shared_all            abs_d3  633
+                              category       shared_all abs_delta_spliced  633
+                              category        ONTd+ONTc            abs_d5  232
+                              category        ONTd+ONTc            abs_d3  232
+                              category        ONTd+ONTc abs_delta_spliced  232
+                              category          ONTd+PB            abs_d5  426
+                              category          ONTd+PB            abs_d3  426
+                              category          ONTd+PB abs_delta_spliced  426
+                              category          ONTc+PB            abs_d5   45
+                              category          ONTc+PB            abs_d3   45
+                              category          ONTc+PB abs_delta_spliced   45
+                         protocol_pair     ONTd vs ONTc            abs_d5  443
+                         protocol_pair     ONTd vs ONTc            abs_d3  443
+                         protocol_pair     ONTd vs ONTc abs_delta_spliced  443
+                         protocol_pair       ONTd vs PB            abs_d5  637
+                         protocol_pair       ONTd vs PB            abs_d3  637
+                         protocol_pair       ONTd vs PB abs_delta_spliced  637
+                         protocol_pair       ONTc vs PB            abs_d5  256
+                         protocol_pair       ONTc vs PB            abs_d3  256
+                         protocol_pair       ONTc vs PB abs_delta_spliced  256
+ pulposeq_transcript_biotype_agreement            agree            abs_d5 1307
+ pulposeq_transcript_biotype_agreement            agree            abs_d3 1307
+ pulposeq_transcript_biotype_agreement            agree abs_delta_spliced 1307
+ pulposeq_transcript_biotype_agreement         DISAGREE            abs_d5   29
+ pulposeq_transcript_biotype_agreement         DISAGREE            abs_d3   29
+ pulposeq_transcript_biotype_agreement         DISAGREE abs_delta_spliced   29
+                  class_code_agreement            agree            abs_d5 1319
+                  class_code_agreement            agree            abs_d3 1319
+                  class_code_agreement            agree abs_delta_spliced 1319
+                  class_code_agreement         DISAGREE            abs_d5   17
+                  class_code_agreement         DISAGREE            abs_d3   17
+                  class_code_agreement         DISAGREE abs_delta_spliced   17
+                   host_gene_agreement            agree            abs_d5 1066
+                   host_gene_agreement            agree            abs_d3 1066
+                   host_gene_agreement            agree abs_delta_spliced 1066
+                   host_gene_agreement         DISAGREE            abs_d5   17
+                   host_gene_agreement         DISAGREE            abs_d3   17
+                   host_gene_agreement         DISAGREE abs_delta_spliced   17
+   mean median     sd q25     q75    p90  max
+   24.9   10.0   80.3   6   17.00   35.0 1610
+  345.2    1.0  865.1   0   25.00 1454.0 7501
+  364.9   14.0  863.7   8  129.25 1461.5 7490
+   21.4   10.0   71.7   5   16.00   34.0 1047
+  326.3    2.0  735.5   0  114.00 1412.8 5424
+  343.7   14.0  732.8   7  171.00 1384.0 5420
+   27.6   10.5   67.7   8   15.25   37.5  469
+  277.6    0.0  819.3   0    5.00 1144.5 5471
+  299.7   11.0  833.0   9   39.00 1138.6 5481
+   30.1   11.0  100.2   7   19.00   41.0 1610
+  403.2    1.0 1061.5   0    9.00 1820.0 7501
+  426.4   14.0 1054.7   8   97.75 1815.0 7490
+   10.3    5.0   12.6   1   14.00   27.6   51
+  411.5    3.0  679.4   0  724.00 1494.0 2921
+  417.2   25.0  679.4   3  724.00 1487.4 2963
+   24.8   10.0   71.4   7   14.00   31.8  861
+  345.2    0.0  831.0   0   14.00 1476.2 5471
+  364.2   11.0  836.2   9  132.50 1466.0 5481
+   27.1   11.0   85.9   8   19.00   40.0 1610
+  335.5    1.0  945.1   0    8.00 1169.4 7501
+  356.6   15.0  938.9   8   79.00 1314.4 7490
+   19.6    6.0   80.5   0   15.00   34.5 1047
+  369.4    3.0  701.6   0  271.25 1554.0 3310
+  386.7   18.0  702.8   4  362.25 1565.5 3340
+   24.7   10.0   80.6   6   17.00   35.0 1610
+  323.3    1.0  843.1   0   13.00 1332.0 7501
+  342.9   14.0  842.0   8   99.50 1333.8 7490
+   30.9   12.0   67.0  10   29.00   37.6  367
+ 1334.9 1104.0 1221.3 114 2156.00 3299.6 4044
+ 1356.7 1072.0 1206.5 340 2153.00 3317.6 4031
+   24.6   10.0   79.9   6   17.00   35.0 1610
+  330.5    1.0  849.8   0   15.00 1359.0 7501
+  350.1   14.0  847.9   8  113.50 1374.4 7490
+   48.4   12.0  109.6  10   23.00   94.8  459
+ 1488.2 1249.0 1245.5 111 2726.00 2809.6 3678
+ 1516.2 1237.0 1259.8 124 2713.00 2995.6 3579
+   23.9   10.0   75.3   6   17.00   34.5 1610
+  335.0    0.0  861.4   0   10.00 1472.0 7501
+  354.4   14.0  860.4   8   90.00 1476.5 7490
+   31.0   12.0   55.7  10   14.00   66.0  227
+ 1439.4  941.0 1603.4   3 2156.00 3207.0 5651
+ 1455.2  940.0 1577.4 228 2170.00 3174.6 5637
+
+Done -> C:\Users\mbarb\OneDrive\paper\downstream\longbench\results\ujc 
